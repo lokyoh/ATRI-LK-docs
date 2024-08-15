@@ -103,6 +103,5 @@ ATRI | 05-10 03:10:37 | ERROR ATRI >> Error Track ID: tnAdiL3a
 **请不要慌张**，教你读报错日志：
 
 - 有用信息一般在报错最底端，如上。从下往上数第二行那个即为你当前所能理解的报错最简信息，这里为 `httpx.ConnectError: All connection attempts failed`。此时你可以：
-    - 前往[仓库](https://github.com/Kyomotoi/ATRI/issues)提交 Issue。注意，Issue 已有模板，请勿随意改动模板结构。
-    - 加入[讨论群](https://jq.qq.com/?_wv=1027&k=WoAAYXbJ)反馈。
+    - 前往[仓库](https://github.com/lokyoh/ATRI-LK/issues)提交 Issue。~~注意，Issue 已有模板，请勿随意改动模板结构。~~
 - 最后一行所谓的 `Error Track ID` 即为上面 `信息层面报错` 中的 `追踪ID`，按上述方式追踪即可，所返回的信息阅读方式如上条。

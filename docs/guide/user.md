@@ -8,10 +8,12 @@
 ## 可用服务列表
 ATRI 为用户提供了以下服务，你可以直接点击服务名跳转到对应页面：
 
+- [lk插件](../service/lkbot.md)
+- [lk功能](../service/lkfunc.md)
+- [lk宠物](../service/lkpet.md)
 - [谁是卷王](../service/anti_effort.md)
 - [小程序处理（解析）](../service/applet.md)
 - [b站动态订阅](../service/bilibili_dynamic.md)
-- [在线跑代码](../service/code_runner.md)
 - [基础部件](../service/essential.md)
 - [乐（玩具合集）](../service/funny.md)
 - [帮助](../service/help.md)
@@ -23,9 +25,12 @@ ATRI 为用户提供了以下服务，你可以直接点击服务名跳转到对
 - [Twitter 动态订阅](../service/twitter.md)
 - [小工具](../service/util.md)
 - [以图搜番](../service/anime_search.md)
-- [IP查询](../service/geoip.md)
 - [反馈（报告 ATRI 的问题）](../service/repo.md)
 - [状态](../service/status.md)
+- [每日新闻](../service/dailynews.md)
+- [coser](../service/coser.md)
+- [MC服务器](../service/mcserver.md)
+- [组队插件](../service/team.md)
 
 ## 反馈说明
 在使用 ATRI 过程中，如出现了 `呜——出错了...请反馈维护者` 一类信息，你可以通过 [反馈](../service/repo.md) 服务，向维护者（ATRI 的主人）进行报告。
