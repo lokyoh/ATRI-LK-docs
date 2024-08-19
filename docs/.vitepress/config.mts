@@ -42,6 +42,7 @@ export default defineConfig({
                 { text: '引导', link: '/service/index.md' },
                 { text: 'lk插件', link: '/service/lkbot.md' },
                 { text: 'lk功能', link: '/service/lkfunc.md' },
+                { text: 'lk农场', link: '/service/lkfarm.md' },
                 { text: 'lk宠物', link: '/service/lkpet.md' },
                 { text: '谁是卷王', link: '/service/anti_effort.md' },
                 { text: '小程序处理', link: '/service/applet.md' },
@@ -90,6 +91,11 @@ export default defineConfig({
                     text: '实战教程', items: [
                         { text: 'ATRI插件', link: '/develop/course/plugin.md'},
                         { text: 'LK插件附属', link: '/develop/course/lkplugin.md'},
+                    ]
+                },
+                {
+                    text: 'LK插件自定义数据', items: [
+                        { text: 'lk农场', link: '/develop/custom/lkfarm.md'},
                     ]
                 },
             ]
@@ -149,9 +155,9 @@ export default defineConfig({
             {
                 text: '服务合集',
                 items: [
-                    { text: '引导', link: '/service/index.md' },
                     { text: 'lk插件', link: '/service/lkbot.md' },
                     { text: 'lk功能', link: '/service/lkfunc.md' },
+                    { text: 'lk农场', link: '/service/lkfarm.md' },
                     { text: 'lk宠物', link: '/service/lkpet.md' },
                     { text: '谁是卷王', link: '/service/anti_effort.md' },
                     { text: '小程序处理', link: '/service/applet.md' },
@@ -204,6 +210,11 @@ export default defineConfig({
                 items: [
                     { text: 'ATRI插件', link: '/develop/course/plugin.md'},
                     { text: 'LK插件附属', link: '/develop/course/lkplugin.md'},
+                ]
+            },
+            {
+                text: 'LK插件自定义数据', items: [
+                    { text: 'lk农场', link: '/develop/custom/lkfarm.md'},
                 ]
             },
         ],
