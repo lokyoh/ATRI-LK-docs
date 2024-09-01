@@ -12,6 +12,7 @@
 - [涩图](../service/setu.md)
 - [自定义回复（词库管理）](../service/thesaurus.md)
 - [广播](../service/broadcast.md)
+- [更新](../service/update.md)
 
 ## 权限说明
 权限层次关系：
@@ -54,7 +55,7 @@ ATRI 不支持通过 nb-cli 控制，即意味着不支持通过 nb-cli 添加�
 
 添加插件后需要修改设置？
 
-- 添加插件后会在 ATRI 根目录下生成文件：`nonebot_plugins.json`、`.env.prod`。我们关注后者。
+- 机器人启动后会在 ATRI 根目录下生成文件：`nonebot_plugins.json`、`.env.prod`。我们关注后者。
 - 前往插件主页查看相关设置，这里假如我们需要用户提交 `XXX_API_KEY`。
 - 打开 `.env.prod`，假如已经存在一些配置，我们补充写入 `XXX_API_KEY` 并填上所需信息：
 ```
@@ -101,5 +102,5 @@ ATRI | 05-10 03:10:37 | ERROR ATRI >> Error Track ID: tnAdiL3a
 **请不要慌张**，教你读报错日志：
 
 - 有用信息一般在报错最底端，如上。从下往上数第二行那个即为你当前所能理解的报错最简信息，这里为 `httpx.ConnectError: All connection attempts failed`。此时你可以：
-    - 前往[仓库](https://github.com/lokyoh/ATRI-LK/issues)提交 Issue。~~注意，Issue 已有模板，请勿随意改动模板结构。~~
+    - 前往[仓库](https://github.com/lokyoh/ATRI-LK/issues)提交 Issue。注意，Issue 已有模板，请勿随意改动模板结构。
 - 最后一行所谓的 `Error Track ID` 即为上面 `信息层面报错` 中的 `追踪ID`，按上述方式追踪即可，所返回的信息阅读方式如上条。

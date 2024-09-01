@@ -3,7 +3,7 @@
 
 ## 符合`ATRI-LK`规范的插件
 ### 1. 如何创建一个能够让ATRI识别的插件
-首先在`ATRI/plugins`下创建一个`plugin_name.py`文件或者一个`plugin_name`软件包。
+首先在`plugins`目录下创建一个`plugin_name.py`文件或者一个`plugin_name`软件包。
 
 在`plugin_name.py`或`plugin_name/__init__.py`中输入以下代码便可以创建一个ATRI能够识别的插件。
 

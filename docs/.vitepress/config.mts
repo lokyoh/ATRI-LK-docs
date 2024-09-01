@@ -5,6 +5,7 @@ export default defineConfig({
     title: "ATRI-LK版",
     description: "ATRI-LK版的文档",
     base: '/ATRI-LK-docs/',
+    lastUpdated: true,
     head: [
         [
             'link', 
@@ -16,6 +17,14 @@ export default defineConfig({
         
         search: {
         provider: 'local'
+        },
+        
+        lastUpdated: {
+            text: '最后更新于',
+            formatOptions: {
+              dateStyle: 'full',
+              timeStyle: 'medium'
+            }
         },
 
         nav: [
@@ -45,7 +54,6 @@ export default defineConfig({
                 { text: 'lk农场', link: '/service/lkfarm.md' },
                 { text: 'lk宠物', link: '/service/lkpet.md' },
                 { text: '谁是卷王', link: '/service/anti_effort.md' },
-                { text: '小程序处理', link: '/service/applet.md' },
                 { text: 'b站动态订阅', link: '/service/bilibili_dynamic.md' },
                 { text: '在线跑代码', link: '/service/code_runner.md' },
                 { text: '基础部件', link: '/service/essential.md' },
@@ -60,7 +68,6 @@ export default defineConfig({
                 { text: '以图搜图', link: '/service/saucenao.md' },
                 { text: '涩图', link: '/service/setu.md' },
                 { text: '词库管理', link: '/service/thesaurus.md' },
-                { text: '推特动态订阅', link: '/service/twitter.md' },
                 { text: '小工具', link: '/service/util.md' },
                 { text: '以图搜番', link: '/service/anime_search.md' },
                 { text: '贴贴', link: '/service/auto_tietie.md' },
@@ -160,7 +167,6 @@ export default defineConfig({
                     { text: 'lk农场', link: '/service/lkfarm.md' },
                     { text: 'lk宠物', link: '/service/lkpet.md' },
                     { text: '谁是卷王', link: '/service/anti_effort.md' },
-                    { text: '小程序处理', link: '/service/applet.md' },
                     { text: 'b站动态订阅', link: '/service/bilibili_dynamic.md' },
                     { text: '在线跑代码', link: '/service/code_runner.md' },
                     { text: '基础部件', link: '/service/essential.md' },
@@ -175,7 +181,6 @@ export default defineConfig({
                     { text: '以图搜图', link: '/service/saucenao.md' },
                     { text: '涩图', link: '/service/setu.md' },
                     { text: '词库管理', link: '/service/thesaurus.md' },
-                    { text: '推特动态订阅', link: '/service/twitter.md' },
                     { text: '小工具', link: '/service/util.md' },
                     { text: '以图搜番', link: '/service/anime_search.md' },
                     { text: '贴贴', link: '/service/auto_tietie.md' },

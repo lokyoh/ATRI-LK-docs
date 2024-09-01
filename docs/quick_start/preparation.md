@@ -29,43 +29,18 @@ pip install poetry
 ## ATRI 本体准备
 
 ### 通过 Git 获取 ATRI
+> 网络状态良好的建议,可随时更新至最新版本,更新插件也采用`git`更新
 
 在任一你喜欢的目录下键入：
 ```shell
 git clone https://github.com/lokyoh/ATRI-LK.git
 ```
 
-### 通过其它方法获取 ATRI
+### 通过其它方法获取 ATRI(请手动更新)
+
+> 这种方式无法使用更新插件
 
 1. 进入 [ATRI 主仓库](https://github.com/lokyoh/ATRI-LK)
 2. 点击显眼的**绿色**按钮：`Code`
 3. 在出现的菜单中找到 `Download ZIP` 并点击
 4. 下载完成后解压至任一你喜欢的目录
-
-## 预先配置
-
-如果处于没有浏览器或不想配置的可直接跳过。
-
-如果想改变浏览器选择，使用任意文本编辑器打开`.env.prod`文件，然后参考以下内容。
-
-`.env.prod`文件提供了Windows环境自带的`msedge`的注释，直接去除`# `使用即可，如果需要其他的修改请参考以下配置。
-
-```ini
-# 默认情况 可不写
-htmlrender_browser = "chromium"
-# 使用 firefox
-htmlrender_browser = "firefox"
-
-# 下载 playwright 代理地址 可不写
-htmlrender_download_host = ""
-
-# 浏览器自定代理地址 可不写
-htmlrender_proxy_host = "http://127.0.0.1:7890"
-
-# 浏览器 channel 支持以下
-# "chrome", "chrome-beta", "chrome-dev", "chrome-canary",
-# "msedge", "msedge-beta", "msedge-dev", "msedge-canary"
-# 手动编辑可以直接使用系统自带浏览器而不用重新下载 chromium
-# 可不写
-htmlrender_browser_channel = ""
-```

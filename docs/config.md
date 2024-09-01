@@ -5,7 +5,7 @@ title: 配置
 
 # ATRI 配置
 
-ATRI 在**初次启动**后会生成 `config.yml`，其为 ATRI 运行配置。后续运行还会生成一个 `.env.prod`，为 nonebot 插件配置。
+ATRI 在**初次启动**后会生成 `config.yml`，其为 ATRI 运行配置。还会生成一个 `.env.prod`，为 nonebot 插件配置。
 
 ::: warning
 `config.yml` 遵循 YAML 语法，如果你不了解 YAML 语法，你可以在[这篇教程](https://www.runoob.com/w3cnote/yaml-intro.html)中学习。
@@ -32,6 +32,12 @@ BotConfig:
   access_token: ""
   proxy: ""
   request_timeout: 5
+
+BrowsConfig:
+  browser: "chromium"
+  download_host: ""
+  proxy_host: ""
+  browser_channel: ""
 
 SauceNAO:
   key: ""
@@ -64,6 +70,12 @@ Setu:
 - proxy：ATRI 运行时对外发送请求的代理，格式参考：`proxy: "http://127.0.0.1:8000"`。
 - request_timeout：ATRI 运行时对外发送请求的超时时间，单位为秒。
 
+### BrowsConfig:
+- browser: 默认情况可不写,可选`firefox`
+- download_host: 下载`playwright`代理地址。**可不写**
+- proxy_host: 浏览器自定代理地址。**可不写**
+- browser_channel: 浏览器 channel 支持以下`chrome`,`chrome-beta`,`chrome-dev`,`chrome-canary`,`msedge`,`msedge-beta`,`msedge-dev`,`msedge-canary`手动编辑可以直接使用系统自带浏览器而不用重新下载`chromium`。**可不写**
+
 ### SauceNAO
 
 - key：SauceNAO 密钥，前往 [SauceNAO](https://saucenao.com/) 获取。
@@ -72,29 +84,3 @@ Setu:
 
 - reverse_proxy：是否启用域名反代。
 - reverse_proxy_domain：反代域名。
-
-## `.env.pord`配置
-
-如果想改变浏览器选择，使用任意文本编辑器打开`.env.prod`文件，然后参考以下内容。
-
-`.env.prod`文件提供了Windows环境自带的`msedge`的注释，直接去除`# `使用即可，如果需要其他的修改请参考以下配置。
-
-```ini
-# 默认情况 可不写
-htmlrender_browser = "chromium"
-# 使用 firefox
-htmlrender_browser = "firefox"
-
-# 下载 playwright 代理地址 可不写
-htmlrender_download_host = ""
-
-# 浏览器自定代理地址 可不写
-htmlrender_proxy_host = "http://127.0.0.1:7890"
-
-# 浏览器 channel 支持以下
-# "chrome", "chrome-beta", "chrome-dev", "chrome-canary",
-# "msedge", "msedge-beta", "msedge-dev", "msedge-canary"
-# 手动编辑可以直接使用系统自带浏览器而不用重新下载 chromium
-# 可不写
-htmlrender_browser_channel = ""
-```

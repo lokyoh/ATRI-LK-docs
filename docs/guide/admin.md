@@ -13,7 +13,6 @@ ATRI 为管理提供了以下服务相关命令操作权限，方便管理针对
 - [rss.mikan](../service/rss_mikan.md)
 - [rss.rsshub](../service/rss_rsshub.md)
 - [自定义回复（词库管理）](../service/thesaurus.md)
-- [Twitter 动态订阅](../service/twitter.md)
 - [广播](../service/broadcast.md)
 
 ## 插件管理说明

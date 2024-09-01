@@ -15,7 +15,7 @@ hero:
 
 features:
   - title: “高性能”
-    details: 得益于强大的 NoneBot 2，真正意义上实现：全平台运行、运行时资源占用极少。
+    details: 得益于强大的 NoneBot 2，真正意义上实现：全平台运行、运行时资源占用少。
   - title: 完善的管理系统
     details: 分群分人禁用/启用某项服务，分群分人封禁/解封。
   - title: 细致入微的帮助
