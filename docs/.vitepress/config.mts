@@ -9,11 +9,11 @@ export default defineConfig({
     head: [
         [
             'link', 
-            { rel: 'icon', href: 'atri.png' }
+            { rel: 'icon', href: 'favicon.ico' }
         ]
     ],
     themeConfig: {
-        logo: 'atri.png',
+        logo: 'favicon.ico',
         
         search: {
         provider: 'local'
