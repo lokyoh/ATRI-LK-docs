@@ -8,12 +8,6 @@
 
 如果**输入对应命令、提供可能的触发信息**后没有反应，可能是当前所在的群聊**禁用**，或者 ATRI 的主人**全局禁用**、又或者如指南首页提到的**代码层面禁用**了该服务。
 
-- [管理](../service/manage.md)
-- [涩图](../service/setu.md)
-- [自定义回复（词库管理）](../service/thesaurus.md)
-- [广播](../service/broadcast.md)
-- [更新](../service/update.md)
-
 ## 权限说明
 权限层次关系：
 
