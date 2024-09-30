@@ -48,38 +48,51 @@ export default defineConfig({
         },
         {
             text: '服务合集', items: [
-                { text: '引导', link: '/service/index.md' },
-                { text: 'lk插件', link: '/service/lkbot.md' },
-                { text: 'lk功能', link: '/service/lkfunc.md' },
-                { text: 'lk农场', link: '/service/lkfarm.md' },
-                { text: 'lk宠物', link: '/service/lkpet.md' },
-                { text: '谁是卷王', link: '/service/anti_effort.md' },
-                { text: 'b站动态订阅', link: '/service/bilibili_dynamic.md' },
-                { text: '在线跑代码', link: '/service/code_runner.md' },
-                { text: '基础部件', link: '/service/essential.md' },
-                { text: '乐', link: '/service/funny.md' },
-                { text: '帮助', link: '/service/help.md' },
-                { text: 'kimo', link: '/service/kimo.md' },
-                { text: '管理', link: '/service/manage.md' },
-                { text: '拍立得', link: '/service/polaroid.md' },
-                { text: 'rss', link: '/service/rss.md' },
-                { text: 'rss.mikan', link: '/service/rss_mikan.md' },
-                { text: 'rss.rsshub', link: '/service/rss_rsshub.md' },
-                { text: '以图搜图', link: '/service/saucenao.md' },
-                { text: '涩图', link: '/service/setu.md' },
-                { text: '词库管理', link: '/service/thesaurus.md' },
-                { text: '小工具', link: '/service/util.md' },
-                { text: '以图搜番', link: '/service/anime_search.md' },
-                { text: '贴贴', link: '/service/auto_tietie.md' },
-                { text: '广播', link: '/service/broadcast.md' },
-                { text: '反馈', link: '/service/repo.md' },
-                { text: '状态', link: '/service/status.md' },
-                { text: '每日新闻', link: '/service/dailynews.md' },
-                { text: 'coser', link: '/service/coser.md' },
-                { text: 'MC服务器', link: '/service/mcserver.md' },
-                { text: '组队插件', link: '/service/team.md' },
-                { text: 'lk群管', link: '/service/lkbot-admin.md' },
-                { text: 'lk主人', link: '/service/lkbot-master.md' },
+                {
+                    text: '内置插件服务',
+                    items: [
+                        { text: 'lk插件', link: '/service/lkbot.md' },
+                        { text: 'lk聊天', link: '/service/lkchat.md' },
+                        { text: 'lk农场', link: '/service/lkfarm.md' },
+                        { text: 'lk宠物', link: '/service/lkpet.md' },
+                        { text: '基础部件', link: '/service/essential.md' },
+                        { text: '帮助', link: '/service/help.md' },
+                        { text: '管理', link: '/service/manage.md' },
+                        { text: 'rss', link: '/service/rss.md' },
+                        { text: '广播', link: '/service/broadcast.md' },
+                        { text: '反馈', link: '/service/repo.md' },
+                        { text: '状态', link: '/service/status.md' },
+                        { text: 'lk群管', link: '/service/lkbot-admin.md' },
+                        { text: 'lk主人', link: '/service/lkbot-master.md' },
+                        { text: '更新', link: '/service/update.md' },
+                        { text: '重启', link: '/service/restart.md' },
+                        { text: '插件商店', link: "/service/plugin_store.md" },
+                    ]
+                },
+                {
+                    text: '商店插件服务',
+                    items: [
+                        { text: '谁是卷王', link: '/service/anti_effort.md' },
+                        { text: 'b站动态订阅', link: '/service/bilibili_dynamic.md' },
+                        { text: '乐', link: '/service/funny.md' },
+                        { text: 'kimo', link: '/service/kimo.md' },
+                        { text: '拍立得', link: '/service/polaroid.md' },
+                        { text: 'rss.mikan', link: '/service/rss_mikan.md' },
+                        { text: 'rss.rsshub', link: '/service/rss_rsshub.md' },
+                        { text: '以图搜图', link: '/service/saucenao.md' },
+                        { text: '涩图', link: '/service/setu.md' },
+                        { text: '词库管理', link: '/service/thesaurus.md' },
+                        { text: '小工具', link: '/service/util.md' },
+                        { text: '以图搜番', link: '/service/anime_search.md' },
+                        { text: '每日新闻', link: '/service/dailynews.md' },
+                        { text: 'coser', link: '/service/coser.md' },
+                        { text: 'MC服务器', link: '/service/mcserver.md' },
+                        { text: '组队插件', link: '/service/team.md' },
+                        { text: '钉宫语录', link: '/service/dinggong.md' },
+                        { text: '每日发癫', link: '/service/fadian.md' },
+                        { text: '舔狗日记', link: '/service/tiangou.md' },
+                    ]
+                }
             ]
         },
         {
@@ -89,9 +102,16 @@ export default defineConfig({
             text: '开发', items: [
                 { text: '引导', link: '/develop/index.md'},
                 {
-                    text: '开发文档', items: [
-                        { text: 'ATRI提供的功能', link: '/develop/atri.md'},
-                        { text: 'LK插件提供的功能', link: '/develop/lkbot.md'},
+                    text: 'ATRI提供的功能',
+                    items: [
+                        { text: 'ATRI提供的功能', link: '/develop/atri.md' },
+                    ]
+                },
+                
+                {
+                    text: 'LK插件提供的功能',
+                    items: [
+                        { text: 'LK插件提供的功能', link: '/develop/lkbot.md' },
                     ]
                 },
                 {
@@ -101,7 +121,7 @@ export default defineConfig({
                     ]
                 },
                 {
-                    text: 'LK插件自定义数据', items: [
+                    text: '自定义数据', items: [
                         { text: 'lk农场', link: '/develop/custom/lkfarm.md'},
                     ]
                 },
@@ -160,22 +180,34 @@ export default defineConfig({
                 ]
             },
             {
-                text: '服务合集',
+                text: '内置插件服务',
                 items: [
                     { text: 'lk插件', link: '/service/lkbot.md' },
-                    { text: 'lk功能', link: '/service/lkfunc.md' },
+                    { text: 'lk聊天', link: '/service/lkchat.md' },
                     { text: 'lk农场', link: '/service/lkfarm.md' },
                     { text: 'lk宠物', link: '/service/lkpet.md' },
+                    { text: '基础部件', link: '/service/essential.md' },
+                    { text: '帮助', link: '/service/help.md' },
+                    { text: '管理', link: '/service/manage.md' },
+                    { text: 'rss', link: '/service/rss.md' },
+                    { text: '广播', link: '/service/broadcast.md' },
+                    { text: '反馈', link: '/service/repo.md' },
+                    { text: '状态', link: '/service/status.md' },
+                    { text: 'lk群管', link: '/service/lkbot-admin.md' },
+                    { text: 'lk主人', link: '/service/lkbot-master.md' },
+                    { text: '更新', link: '/service/update.md' },
+                    { text: '重启', link: '/service/restart.md' },
+                    { text: '插件商店', link: "/service/plugin_store.md" },
+                ]
+            },
+            {
+                text: '商店插件服务',
+                items: [
                     { text: '谁是卷王', link: '/service/anti_effort.md' },
                     { text: 'b站动态订阅', link: '/service/bilibili_dynamic.md' },
-                    { text: '在线跑代码', link: '/service/code_runner.md' },
-                    { text: '基础部件', link: '/service/essential.md' },
                     { text: '乐', link: '/service/funny.md' },
-                    { text: '帮助', link: '/service/help.md' },
                     { text: 'kimo', link: '/service/kimo.md' },
-                    { text: '管理', link: '/service/manage.md' },
                     { text: '拍立得', link: '/service/polaroid.md' },
-                    { text: 'rss', link: '/service/rss.md' },
                     { text: 'rss.mikan', link: '/service/rss_mikan.md' },
                     { text: 'rss.rsshub', link: '/service/rss_rsshub.md' },
                     { text: '以图搜图', link: '/service/saucenao.md' },
@@ -183,16 +215,13 @@ export default defineConfig({
                     { text: '词库管理', link: '/service/thesaurus.md' },
                     { text: '小工具', link: '/service/util.md' },
                     { text: '以图搜番', link: '/service/anime_search.md' },
-                    { text: '贴贴', link: '/service/auto_tietie.md' },
-                    { text: '广播', link: '/service/broadcast.md' },
-                    { text: '反馈', link: '/service/repo.md' },
-                    { text: '状态', link: '/service/status.md' },
                     { text: '每日新闻', link: '/service/dailynews.md' },
                     { text: 'coser', link: '/service/coser.md' },
                     { text: 'MC服务器', link: '/service/mcserver.md' },
                     { text: '组队插件', link: '/service/team.md' },
-                    { text: 'lk群管', link: '/service/lkbot-admin.md' },
-                    { text: 'lk主人', link: '/service/lkbot-master.md' },
+                    { text: '钉宫语录', link: '/service/dinggong.md' },
+                    { text: '每日发癫', link: '/service/fadian.md' },
+                    { text: '舔狗日记', link: '/service/tiangou.md' },
                 ]
             }
         ],
@@ -204,10 +233,16 @@ export default defineConfig({
                 ]
             },
             {
-                text: '开发文档',
+                text: 'ATRI提供的功能',
                 items: [
-                    { text: 'ATRI提供的功能', link: '/develop/atri.md'},
-                    { text: 'LK插件提供的功能', link: '/develop/lkbot.md'},
+                    { text: 'ATRI提供的功能', link: '/develop/atri.md' },
+                ]
+            },
+            
+            {
+                text: 'LK插件提供的功能',
+                items: [
+                    { text: 'LK插件提供的功能', link: '/develop/lkbot.md' },
                 ]
             },
             {
@@ -218,7 +253,7 @@ export default defineConfig({
                 ]
             },
             {
-                text: 'LK插件自定义数据', items: [
+                text: '自定义数据', items: [
                     { text: 'lk农场', link: '/develop/custom/lkfarm.md'},
                 ]
             },

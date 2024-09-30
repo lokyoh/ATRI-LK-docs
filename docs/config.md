@@ -38,21 +38,13 @@ BrowsConfig:
   download_host: ""
   proxy_host: ""
   browser_channel: ""
-
-SauceNAO:
-  key: ""
-
-Setu:
-  reverse_proxy: true
-  reverse_proxy_domain: "i.pixiv.re"
 ```
 :::
 
 其中：
 - ConfigVersion 为设置文件版本。**请勿更改**
 - [BotConfig](#botconfig) 为 ATRI 主体设置。
-- [SauceNAO](#saucenao) 为以图搜图设置。
-- [Setu](#setu) 为涩图相关设置。
+- [BrowsConfig](#browsconfig) 为浏览器配置。
 
 ## 解析配置
 
@@ -75,12 +67,3 @@ Setu:
 - download_host: 下载`playwright`代理地址。**可不写**
 - proxy_host: 浏览器自定代理地址。**可不写**
 - browser_channel: 浏览器 channel 支持以下`chrome`,`chrome-beta`,`chrome-dev`,`chrome-canary`,`msedge`,`msedge-beta`,`msedge-dev`,`msedge-canary`手动编辑可以直接使用系统自带浏览器而不用重新下载`chromium`。**可不写**
-
-### SauceNAO
-
-- key：SauceNAO 密钥，前往 [SauceNAO](https://saucenao.com/) 获取。
-
-### Setu
-
-- reverse_proxy：是否启用域名反代。
-- reverse_proxy_domain：反代域名。

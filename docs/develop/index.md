@@ -10,7 +10,7 @@
 ```` python
 from ATRI.service import Service
 
-service_name = Service("服务名").document("服务介绍").type(Service.ServiceType.TYPENAME)
+service_name = Service("服务名").document("服务介绍").type(Service.ServiceType.TYPENAME).version('1.0.0')
 ````
 
 > `Service.ServiceType.TYPENAME`中的`TYPENAME`并不存在,请自行改为自己想要的类型。
@@ -36,9 +36,9 @@ service_name = service_name.on_command(cmd="指令名称", docs="指令介绍")
 
 ```` python
 # 原来的服务
-original_service = Service("服务名").document("服务介绍").set_other_attribute(args,)
+service = Service("服务名").document("服务介绍").set_other_attribute(args,)
 # 新的服务
-original_service = Service("服务名").document("服务介绍").type(Service.ServiceType.TYPENAME).set_other_attribute(args,)
+service = Service("服务名").document("服务介绍").type(Service.ServiceType.TYPENAME).version('1.0.0').set_other_attribute(args,)
 ````
 
 ## 从其他nonebot插件移植
@@ -50,5 +50,5 @@ original_service = Service("服务名").document("服务介绍").type(Service.Se
 
 [LK插件附属插件](../develop/course/lkplugin.md)
 
-## LK插件的自定义数据
+## 自定义数据
 - [lk农场](../develop/custom/lkfarm.md)
