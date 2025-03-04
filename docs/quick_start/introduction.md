@@ -24,7 +24,6 @@ title: 介绍
 - 兼容 NoneBot2 生态：使用 NoneBot2 进行项目底层构建，使得 ATRI 能很好地融入 NoneBot2 的生态，通过 ATRI 你甚至可以控制*其它来自 [NoneBot2 Store](https://v2.nonebot.dev/store) 的插件。
 - 遵循 OneBot v11 规范：意味着协议端除 go-cqhttp 之外，还有 mirai 和 oicq 可选。具体请参考：[OneBot 标准文档-生态](https://onebot.dev/ecosystem.html#onebot-11-10-cqhttp)。
 
-
 ::: tip
-*：仅当通过 ATRI 内的 `管理` 添加 Nonebot2 插件时，才可控制。非经过 ATRI 安装的任何插件，例如直接将插件文件拖进 ATRI/plugins，均**无法触发**。
+*：仅当通过 ATRI 内的 `管理` 添加 Nonebot2 插件时，才可控制。非经过 ATRI 安装的任何插件，例如直接将插件文件拖进 plugins，均**无法触发**。
 :::

@@ -55,6 +55,8 @@ export default defineConfig({
                         { text: 'lk聊天', link: '/service/lkchat.md' },
                         { text: 'lk农场', link: '/service/lkfarm.md' },
                         { text: 'lk宠物', link: '/service/lkpet.md' },
+                        { text: '签到', link: '/service/signin.md' },
+                        { text: '投喂', link: '/service/feed.md' },
                         { text: '基础部件', link: '/service/essential.md' },
                         { text: '帮助', link: '/service/help.md' },
                         { text: '管理', link: '/service/manage.md' },
@@ -122,6 +124,8 @@ export default defineConfig({
                 },
                 {
                     text: '自定义数据', items: [
+                        { text: '物品数据及其使用方法注册', link: '/develop/custom/item.md'},
+                        { text: '商店数据注册', link: '/develop/custom/shop.md'},
                         { text: 'lk农场', link: '/develop/custom/lkfarm.md'},
                     ]
                 },
@@ -186,6 +190,8 @@ export default defineConfig({
                     { text: 'lk聊天', link: '/service/lkchat.md' },
                     { text: 'lk农场', link: '/service/lkfarm.md' },
                     { text: 'lk宠物', link: '/service/lkpet.md' },
+                    { text: '签到', link: '/service/signin.md' },
+                    { text: '投喂', link: '/service/feed.md' },
                     { text: '基础部件', link: '/service/essential.md' },
                     { text: '帮助', link: '/service/help.md' },
                     { text: '管理', link: '/service/manage.md' },
@@ -254,6 +260,8 @@ export default defineConfig({
             },
             {
                 text: '自定义数据', items: [
+                    { text: '物品数据及其使用方法注册', link: '/develop/custom/item.md'},
+                    { text: '商店数据注册', link: '/develop/custom/shop.md'},
                     { text: 'lk农场', link: '/develop/custom/lkfarm.md'},
                 ]
             },
