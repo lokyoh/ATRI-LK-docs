@@ -49,30 +49,36 @@ export default defineConfig({
         {
             text: '服务合集', items: [
                 {
+                    text: '起步',
+                    items: [
+                        { text: '引导', link: '/service/index.md' }
+                    ]
+                },
+                {
                     text: '内置插件服务',
                     items: [
-                        { text: 'lk插件', link: '/service/lkbot.md' },
-                        { text: 'lk聊天', link: '/service/lkchat.md' },
-                        { text: 'lk农场', link: '/service/lkfarm.md' },
-                        { text: 'lk宠物', link: '/service/lkpet.md' },
+                        { text: '用户', link: '/service/lkbot.md' },
+                        { text: '聊天', link: '/service/lkchat.md' },
+                        { text: '农场', link: '/service/lkfarm.md' },
+                        { text: '宠物', link: '/service/lkpet.md' },
+                        { text: '钓鱼', link: '/service/lkfishing.md' },
                         { text: '签到', link: '/service/signin.md' },
                         { text: '投喂', link: '/service/feed.md' },
-                        { text: '基础部件', link: '/service/essential.md' },
                         { text: '帮助', link: '/service/help.md' },
                         { text: '管理', link: '/service/manage.md' },
                         { text: 'rss', link: '/service/rss.md' },
                         { text: '广播', link: '/service/broadcast.md' },
                         { text: '反馈', link: '/service/repo.md' },
                         { text: '状态', link: '/service/status.md' },
-                        { text: 'lk群管', link: '/service/lkbot-admin.md' },
-                        { text: 'lk主人', link: '/service/lkbot-master.md' },
+                        { text: '群管', link: '/service/lkbot-admin.md' },
+                        { text: '主人', link: '/service/lkbot-master.md' },
                         { text: '更新', link: '/service/update.md' },
                         { text: '重启', link: '/service/restart.md' },
                         { text: '插件商店', link: "/service/plugin_store.md" },
                     ]
                 },
                 {
-                    text: '商店插件服务',
+                    text: '插件商店服务',
                     items: [
                         { text: '谁是卷王', link: '/service/anti_effort.md' },
                         { text: 'b站动态订阅', link: '/service/bilibili_dynamic.md' },
@@ -93,6 +99,7 @@ export default defineConfig({
                         { text: '钉宫语录', link: '/service/dinggong.md' },
                         { text: '每日发癫', link: '/service/fadian.md' },
                         { text: '舔狗日记', link: '/service/tiangou.md' },
+                        { text: '点歌', link: '/service/music.md' },
                     ]
                 }
             ]
@@ -126,7 +133,8 @@ export default defineConfig({
                     text: '自定义数据', items: [
                         { text: '物品数据及其使用方法注册', link: '/develop/custom/item.md'},
                         { text: '商店数据注册', link: '/develop/custom/shop.md'},
-                        { text: 'lk农场', link: '/develop/custom/lkfarm.md'},
+                        { text: '农场插件自定义数据', link: '/develop/custom/lkfarm.md'},
+                        { text: '钓鱼插件自定义数据', link: '/develop/custom/lkfishing.md'},
                     ]
                 },
             ]
@@ -186,28 +194,28 @@ export default defineConfig({
             {
                 text: '内置插件服务',
                 items: [
-                    { text: 'lk插件', link: '/service/lkbot.md' },
-                    { text: 'lk聊天', link: '/service/lkchat.md' },
-                    { text: 'lk农场', link: '/service/lkfarm.md' },
-                    { text: 'lk宠物', link: '/service/lkpet.md' },
+                    { text: '用户', link: '/service/lkbot.md' },
+                    { text: '聊天', link: '/service/lkchat.md' },
+                    { text: '农场', link: '/service/lkfarm.md' },
+                    { text: '宠物', link: '/service/lkpet.md' },
+                    { text: '钓鱼', link: '/service/lkfishing.md' },
                     { text: '签到', link: '/service/signin.md' },
                     { text: '投喂', link: '/service/feed.md' },
-                    { text: '基础部件', link: '/service/essential.md' },
                     { text: '帮助', link: '/service/help.md' },
                     { text: '管理', link: '/service/manage.md' },
                     { text: 'rss', link: '/service/rss.md' },
                     { text: '广播', link: '/service/broadcast.md' },
                     { text: '反馈', link: '/service/repo.md' },
                     { text: '状态', link: '/service/status.md' },
-                    { text: 'lk群管', link: '/service/lkbot-admin.md' },
-                    { text: 'lk主人', link: '/service/lkbot-master.md' },
+                    { text: '群管', link: '/service/lkbot-admin.md' },
+                    { text: '主人', link: '/service/lkbot-master.md' },
                     { text: '更新', link: '/service/update.md' },
                     { text: '重启', link: '/service/restart.md' },
                     { text: '插件商店', link: "/service/plugin_store.md" },
                 ]
             },
             {
-                text: '商店插件服务',
+                text: '插件商店服务',
                 items: [
                     { text: '谁是卷王', link: '/service/anti_effort.md' },
                     { text: 'b站动态订阅', link: '/service/bilibili_dynamic.md' },
@@ -228,6 +236,7 @@ export default defineConfig({
                     { text: '钉宫语录', link: '/service/dinggong.md' },
                     { text: '每日发癫', link: '/service/fadian.md' },
                     { text: '舔狗日记', link: '/service/tiangou.md' },
+                    { text: '点歌', link: '/service/music.md' },
                 ]
             }
         ],
@@ -262,7 +271,8 @@ export default defineConfig({
                 text: '自定义数据', items: [
                     { text: '物品数据及其使用方法注册', link: '/develop/custom/item.md'},
                     { text: '商店数据注册', link: '/develop/custom/shop.md'},
-                    { text: 'lk农场', link: '/develop/custom/lkfarm.md'},
+                    { text: '农场插件自定义数据', link: '/develop/custom/lkfarm.md'},
+                    { text: '钓鱼插件自定义数据', link: '/develop/custom/lkfishing.md'},
                 ]
             },
         ],

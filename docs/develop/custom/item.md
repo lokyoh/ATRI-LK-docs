@@ -35,7 +35,7 @@ item.set_use_funcs(my_item_funcs) # 参数类型为`ATRI.system.lkbot.data.item_
 个人使用可在`/res/data/item`文件夹下新建一个yaml文件，在其中填写相应数据即可。
 
 ::: warning
-如果是插件添加自定义商店，请勿安装上述方法创建
+如果是插件添加自定义商店，请勿按照上述方法创建
 :::
 
 插件作者请在`/res/data/{your_plugin_name}/item`该目录下新建yaml文件，并在插件内写入以下代码。

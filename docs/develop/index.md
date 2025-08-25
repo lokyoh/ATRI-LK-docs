@@ -29,8 +29,7 @@ service_name = Service(
 )
 ````
 
-> `Service.ServiceType.TYPENAME`中的`TYPENAME`并不存在,请自行改为自己想要的类型。
-
+> `Service.ServiceType.TYPENAME`中的`TYPENAME`并不存在,请自行改为自己想要的类型。  
 > 服务的更多属性值请参考[服务属性](../develop/atri.md)
 
 ### 2. 为服务添加功能
@@ -43,8 +42,7 @@ service_name = Service(
 matcher_name = service_name.on_command(cmd="指令名称", docs="指令介绍")
 ````
 
-> 更多匹配方式请参考[事件响应器](../develop/atri.md)
-
+> 更多匹配方式请参考[事件响应器](../develop/atri.md)  
 > ATRI插件依然也支持原版的`事件响应器`,但不能在服务菜单中找到。
 
 ### 3. 实现功能
@@ -74,4 +72,7 @@ service = Service("服务名").document("服务介绍").type(Service.ServiceType
 
 ## 自定义数据
 
-- [lk农场](../develop/custom/lkfarm.md)
+- [物品数据及其使用方法注册](../develop/custom/item.md)
+- [商店数据注册](../develop/custom/shop.md)
+- [农场插件自定义数据](../develop/custom/lkfarm.md)
+- [钓鱼插件自定义数据](../develop/custom/lkfishing.md)
