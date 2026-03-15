@@ -298,7 +298,7 @@ export default defineConfig({
 
         footer: {
             message: 'Released under the CC-BY-SA-4.0 License.',
-            copyright: 'Copyright © 2024-present <a href="https://blog.lokyoh.com" target=_blank>lokyoh</a>'
+            copyright: 'Copyright © 2026-present <a href="https://blog.lokyoh.com" target=_blank>lokyoh</a>'
         }
     }
 })

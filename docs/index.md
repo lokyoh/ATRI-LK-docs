@@ -12,6 +12,12 @@ hero:
     - theme: alt
       text: View on GitHub
       link: https://github.com/lokyoh/ATRI-LK
+    - theme: alt
+      text: ATRI-LK交流群
+      link: https://qm.qq.com/q/8Gx7UxXnA4
+    - theme: alt
+      text: ATRI-LK技术群
+      link: https://qm.qq.com/q/LUuT6ejVeO
 
 features:
   - title: “高性能”
@@ -21,4 +27,3 @@ features:
   - title: 细致入微的帮助
     details: 精确到服务的单条命令。（仅当插件符合 ATRI 规范时）
 ---
-
