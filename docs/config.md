@@ -1,6 +1,6 @@
 ---
 layout: doc
-title: 配置
+title: ATRI 配置
 ---
 
 # ATRI 配置
@@ -16,9 +16,10 @@ ATRI 在**初次启动**后会生成 `config.yml`，其为 ATRI 运行配置。�
 打开位于**项目根目录**的 `config.yml`，你会得到如下内容：（此处展示的为示例填写）
 
 ::: details
+
 ```yaml
 # 设置参考文档: https://lokyoh.github.io/ATRI-LK-docs/config.html
-ConfigVersion: "1.0.0"
+ConfigVersion: "1.1.0"
 
 BotConfig:
   host: "127.0.0.1"
@@ -29,7 +30,7 @@ BotConfig:
   command_start: ["/"]
   command_sep: ["."]
   session_expire_timeout: 60
-  access_token: ""
+  access_token: "atri"
   proxy: ""
   request_timeout: 30
 
@@ -44,9 +45,11 @@ WebUIConfig:
   password: "random_str"
   secret: "random_str"
 ```
+
 :::
 
 其中：
+
 - ConfigVersion 为设置文件版本。**请勿更改**
 - [BotConfig](#botconfig) 为 ATRI 主体设置。
 - [BrowsConfig](#browsconfig) 为浏览器配置。
@@ -67,7 +70,8 @@ WebUIConfig:
 - proxy：ATRI 运行时对外发送请求的代理，格式参考：`proxy: "http://127.0.0.1:8000"`。
 - request_timeout：ATRI 运行时对外发送请求的超时时间，单位为秒。
 
-### BrowsConfig:
+### BrowsConfig
+
 - browser: 默认情况可不写,可选`firefox`
 - download_host: 下载`playwright`代理地址。**可不写**
 - proxy_host: 浏览器自定代理地址。**可不写**
