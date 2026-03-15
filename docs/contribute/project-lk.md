@@ -1,3 +1,3 @@
 # 为ATRI-LK做贡献
 
-待补充
+[项目仓库](https://github.com/lokyoh/ATRI-LK)

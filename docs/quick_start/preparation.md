@@ -16,7 +16,7 @@ ATRI 不支持 nb-cli 控制，请勿使用 nb-cli 操作 ATRI
 ## 环境准备
 
 ::: danger 注意
-请确保你的 Python 版本保持在该范围：**>= 3.10**
+请确保你的 Python 版本保持在该范围：**>= 3.12**
 :::
 
 为了让 ATRI 稳定运行，我们使用了虚拟环境（[Poetry](https://python-poetry.org/)）：

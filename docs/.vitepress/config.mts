@@ -132,7 +132,6 @@ export default defineConfig({
                 { text: '引导', link: '/contribute/index.md' },
                 { text: '为文档贡献', link: '/contribute/docs.md' },
                 { text: '为 ATRI-LK 贡献', link: '/contribute/project-lk.md' },
-                { text: '为 ATRI 贡献', link: '/contribute/project.md' }
             ]
         }
     ],
@@ -269,8 +268,7 @@ export default defineConfig({
                 text: '贡献分流',
                 items: [
                     { text: '为文档贡献', link: '/contribute/docs.md' },
-                    { text: '为 ATRI-LK 贡献', link: '/contribute/project-lk.md' },
-                    { text: '为 ATRI 贡献', link: '/contribute/project.md' }
+                    { text: '为 ATRI-LK 贡献', link: '/contribute/project-lk.md' }
                 ]
             }
         ]

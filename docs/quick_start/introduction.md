@@ -17,6 +17,8 @@ title: 介绍
 
 本项目中所使用的任何有关 [ATRI](https://atri-mdm.com/) 的图标、LOGO，解释权、著作权均归 [ANIPLEX](https://aniplex-exe.com/)。你可以[在此](https://aniplex-exe.com/guidelines/)查看相关内容。
 
+欢迎来到QQ群交流:[ATRI-LK交流群](https://qm.qq.com/q/8Gx7UxXnA4)
+
 ## 特性
 
 除主页所展示的特性，我们还有：

@@ -25,19 +25,24 @@ BotConfig:
   port: 20000
   debug: false
   superusers: ["1145141919"]
-  nickname: ["ATRI", "Atri", "atri", "亚托莉", "アトリ"]
-  command_start: ["", "/"]
+  nickname: ["亚托莉", "ATRI"]
+  command_start: ["/"]
   command_sep: ["."]
   session_expire_timeout: 60
   access_token: ""
   proxy: ""
-  request_timeout: 5
+  request_timeout: 30
 
 BrowsConfig:
   browser: "chromium"
   download_host: ""
   proxy_host: ""
   browser_channel: ""
+
+WebUIConfig:
+  username: "admin"
+  password: "random_str"
+  secret: "random_str"
 ```
 :::
 
@@ -46,7 +51,7 @@ BrowsConfig:
 - [BotConfig](#botconfig) 为 ATRI 主体设置。
 - [BrowsConfig](#browsconfig) 为浏览器配置。
 
-## 解析配置
+## 配置解析
 
 ### BotConfig
 
@@ -67,3 +72,8 @@ BrowsConfig:
 - download_host: 下载`playwright`代理地址。**可不写**
 - proxy_host: 浏览器自定代理地址。**可不写**
 - browser_channel: 浏览器 channel 支持以下`chrome`,`chrome-beta`,`chrome-dev`,`chrome-canary`,`msedge`,`msedge-beta`,`msedge-dev`,`msedge-canary`手动编辑可以直接使用系统自带浏览器而不用重新下载`chromium`。**可不写**
+
+### WebUIConfig
+- username: 登录用户名。默认值`admin`
+- password: 登录密码。默认值为随机生成值
+- secret: jwt密钥。默认值为随机生成值

@@ -15,9 +15,9 @@ poetry shell
 ```
 以进入虚拟环境。
 
-是否进入虚拟环境？当控制台左侧出现**类似** `(atri-lk-py3.10)` 的信息，即表明你已进入 ATRI 专属的虚拟环境，例如：
+是否进入虚拟环境？当控制台左侧出现**类似** `(atri-lk-py3.12)` 的信息，即表明你已进入 ATRI 专属的虚拟环境，例如：
 ```shell
-(atri-lk-py3.10) PS D:\develop\ATRI-LK>
+(atri-lk-py3.12) PS D:\ATRI-LK>
 ```
 
 ::: warning
