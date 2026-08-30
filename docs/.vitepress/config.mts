@@ -10,6 +10,35 @@ export default defineConfig({
         [
             'link', 
             { rel: 'icon', href: 'favicon.ico' }
+        ],
+        [
+            'style',
+            {},
+            `
+            .VPNavBarTitle .title {
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+            }
+            .VPNavBarTitle .title::after {
+              content: "YHN-LK0-023";
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 8px;
+              line-height: 1.2;
+              padding: 2px 6px;
+              border-radius: 999px;
+              color: var(--vp-c-text-2);
+              background: var(--vp-c-bg-soft);
+              border: 1px solid var(--vp-c-divider);
+              font-weight: 600;
+              letter-spacing: 0.06em;
+              vertical-align: middle;
+              transform: translateY(-1px);
+              opacity: 0.9;
+            }
+            `
         ]
     ],
     themeConfig: {
@@ -62,6 +91,7 @@ export default defineConfig({
                         { text: '农场', link: '/service/lkfarm.md' },
                         { text: '宠物', link: '/service/lkpet.md' },
                         { text: '钓鱼', link: '/service/lkfishing.md' },
+                        { text: '运势', link: '/service/fortune.md' },
                         { text: '签到', link: '/service/signin.md' },
                         { text: '投喂', link: '/service/feed.md' },
                         { text: '帮助', link: '/service/help.md' },
@@ -113,7 +143,20 @@ export default defineConfig({
                 {
                     text: 'ATRI提供的功能',
                     items: [
-                        { text: 'ATRI提供的功能', link: '/develop/atri.md' },
+                        { text: 'ATRI核心模块说明', link: '/develop/atri.md' },
+                        { text: 'bot模块', link: '/develop/atri/bot.md' },
+                        { text: 'configs模块', link: '/develop/atri/configs.md' },
+                        { text: 'database模块', link: '/develop/atri/database.md' },
+                        { text: 'event模块', link: '/develop/atri/event.md' },
+                        { text: 'exceptions模块', link: '/develop/atri/exceptions.md' },
+                        { text: 'load模块', link: '/develop/atri/load.md' },
+                        { text: 'log模块', link: '/develop/atri/log.md' },
+                        { text: 'message模块', link: '/develop/atri/message.md' },
+                        { text: 'permission模块', link: '/develop/atri/permission.md' },
+                        { text: 'rule模块', link: '/develop/atri/rule.md' },
+                        { text: 'scheduler模块', link: '/develop/atri/scheduler.md' },
+                        { text: 'service模块', link: '/develop/atri/service.md' },
+                        { text: 'utils模块', link: '/develop/atri/utils.md' },
                     ]
                 },
                 
@@ -198,6 +241,7 @@ export default defineConfig({
                     { text: '农场', link: '/service/lkfarm.md' },
                     { text: '宠物', link: '/service/lkpet.md' },
                     { text: '钓鱼', link: '/service/lkfishing.md' },
+                    { text: '运势', link: '/service/fortune.md' },
                     { text: '签到', link: '/service/signin.md' },
                     { text: '投喂', link: '/service/feed.md' },
                     { text: '帮助', link: '/service/help.md' },
@@ -249,7 +293,20 @@ export default defineConfig({
             {
                 text: 'ATRI提供的功能',
                 items: [
-                    { text: 'ATRI提供的功能', link: '/develop/atri.md' },
+                    { text: 'ATRI核心模块说明', link: '/develop/atri.md' },
+                    { text: 'bot模块', link: '/develop/atri/bot.md' },
+                    { text: 'configs模块', link: '/develop/atri/configs.md' },
+                    { text: 'database模块', link: '/develop/atri/database.md' },
+                    { text: 'event模块', link: '/develop/atri/event.md' },
+                    { text: 'exceptions模块', link: '/develop/atri/exceptions.md' },
+                    { text: 'load模块', link: '/develop/atri/load.md' },
+                    { text: 'log模块', link: '/develop/atri/log.md' },
+                    { text: 'message模块', link: '/develop/atri/message.md' },
+                    { text: 'permission模块', link: '/develop/atri/permission.md' },
+                    { text: 'rule模块', link: '/develop/atri/rule.md' },
+                    { text: 'scheduler模块', link: '/develop/atri/scheduler.md' },
+                    { text: 'service模块', link: '/develop/atri/service.md' },
+                    { text: 'utils模块', link: '/develop/atri/utils.md' },
                 ]
             },
             

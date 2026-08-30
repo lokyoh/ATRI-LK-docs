@@ -13,7 +13,7 @@
 ```` python
 from ATRI.service import Service
 
-service_name = Service("服务名").document("服务介绍").type(Service.ServiceType.TYPENAME).version('1.0.0')
+service_name = Service("服务名").document("服务介绍").set_type(Service.ServiceType.TYPENAME).version('1.0.0')
 ````
 
 或者：
@@ -57,7 +57,7 @@ matcher_name = service_name.on_command(cmd="指令名称", docs="指令介绍")
 # 原来的服务
 service = Service("服务名").document("服务介绍").set_other_attribute(args,)
 # 新的服务
-service = Service("服务名").document("服务介绍").type(Service.ServiceType.TYPENAME).version('1.0.0').set_other_attribute(args,)
+service = Service("服务名").document("服务介绍").set_type(Service.ServiceType.TYPENAME).version('1.0.0').set_other_attribute(args,)
 ````
 
 ## 从其他nonebot插件移植
