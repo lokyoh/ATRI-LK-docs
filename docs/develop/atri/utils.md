@@ -26,7 +26,6 @@
   - `ATRI/utils/request.py`
   - `ATRI/utils/sqlite.py`
   - `ATRI/utils/check_update.py`
-  - `ATRI/utils/apscheduler.py`
 
 ---
 
@@ -792,25 +791,7 @@ def get_version_num(v: str):
 
 ---
 
-## 19. APScheduler 入口：`apscheduler.py`
-
-```python
-from ATRI.scheduler.data_source import scheduler as atri_scheduler
-
-scheduler = atri_scheduler
-```
-
-这个文件本身非常薄，它的意义在于把项目中的调度器统一导出，方便其他模块直接使用：
-
-```python
-from ATRI.utils.apscheduler import scheduler
-```
-
-这样工具模块和业务逻辑就可以共用同一个全局调度器，而不需要重复初始化调度器对象。
-
----
-
-## 20. 使用建议
+## 19. 使用建议
 
 如果你在开发 ATRI 插件或扩展功能，可以优先按需求选用这些工具：
 
@@ -828,7 +809,7 @@ from ATRI.utils.apscheduler import scheduler
 
 ---
 
-## 21. 总结
+## 20. 总结
 
 `ATRI.utils` 的本质，是一个“工程辅助层”。它没有强烈的业务语义，但它决定了插件是否能更快速、更安全、更稳定地完成常见工作：
 

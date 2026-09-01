@@ -2,8 +2,6 @@
 
 `ATRI.system.lkapi` 是 ATRI 中对 LK Bot 相关能力的对外封装层。它并不负责实现核心业务逻辑，而是把底层的 LK Bot 运行时能力统一导出，方便其他模块或插件按稳定接口访问。
 
-本说明聚焦于当前仍然有效的接口与使用方式。`lkapi.ai` 相关能力已经逐步被更高层的 `ATRI.system.agent` 体系接管，因此本文不再展开 AI 细节，避免误导开发者。
-
 ## 1. 模块定位
 
 入口路径：
@@ -36,7 +34,6 @@ from ATRI.system.lkapi import bot, entity, utils, API_VERSION
 `ATRI/system/lkapi/__init__.py` 中的主要内容为：
 
 ```python
-from . import ai
 from . import bot
 from . import entity
 from . import utils
@@ -49,9 +46,7 @@ API_VERSION = 1
 - `bot`：提供 bot 相关辅助能力
 - `entity`：提供用户/道具/商店等结构化数据
 - `utils`：提供图片与音频等工具
-- `API_VERSION`：当前兼容接口版本号
-
-> 说明：`ai` 仍然存在于包中，但它并不是当前开发重点；这部分能力正在被更通用的 `ATRI.system` / `agent` 体系取代，所以本文不做深入说明。
+- `API_VERSION`：当前接口版本号
 
 ---
 
@@ -354,12 +349,6 @@ audio_path = lkapi.utils.audio.get_tts_audio("你好，ATRI")
 - 把底层 LK Bot 数据与工具统一导出
 - 保持插件层调用方式尽量一致
 
-但需要注意：
-
-- `lkapi.ai` 相关能力正在被 `ATRI.system` / `agent` 体系替代
-- 未来底层实现可能继续调整
-- 业务代码应优先依赖当前稳定的 `bot` / `entity` / `utils` 接口，而非对 AI 细节强耦合
-
 ---
 
 ## 8. 总结
@@ -369,14 +358,10 @@ audio_path = lkapi.utils.audio.get_tts_audio("你好，ATRI")
 - `bot`：机器人状态、检查器、消息队列、配置访问
 - `entity`：用户/道具/商店等数据实体封装
 - `utils`：图片/音频相关辅助工具
-- `ai`：保留兼容入口，但不是当前主线开发重点
 
 对开发者来说，最值得优先阅读和使用的是：
 
-1. `ATRI/system/lkapi/bot/message_queue.py`
-2. `ATRI/system/lkapi/entity/user.py`
-3. `ATRI/system/lkapi/entity/item.py`
-4. `ATRI/system/lkapi/utils/audio.py`
-5. `ATRI/system/lkapi/utils/picture.py`
+1. `ATRI/system/lkapi/entity/user.py`
+2. `ATRI/system/lkapi/entity/item.py`
 
-这样可以快速建立对 LK Bot 运行时能力的理解，并减少对即将替换的 AI 结构产生误解。
+这样可以快速建立对 LK Bot 运行时能力的理解。
