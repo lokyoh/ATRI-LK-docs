@@ -1,23 +1,29 @@
 # utils 模块
 
-`ATRI.utils` 是 ATRI 项目的通用工具层，作用是为其他模块提供低耦合、可复用的基础能力。它并不负责业务流程本身，而是给插件、事件、调度、适配器和监控模块提供通用设施：
+`ATRI.utils` 是 ATRI 项目的通用工具层，作用是为其他模块提供低耦合、可复用的基础能力。它不负责业务流程本身，而是为插件、事件、调度、适配器、监控和本地存储等模块提供公共设施：
 
 - 文件读写与 JSON 处理
-- 时间转换与字符串工具
-- 防重放/限流与线程安全保护
+- 时间与时区处理
+- 防重放 / 限流与线程安全保护
 - 图片编辑与图像消息生成
 - HTTP 请求和 Python 包管理
 - SQLite 轻量存储
+- 事件订阅与通知机制
 - 平台、CPU、内存、磁盘、网络状态监控
-- GitHub 版本/提交检查
+- GitHub 版本与更新检查
+- 日志与配置相关的辅助封装
 
-从设计上看，这个模块属于“框架底座”，本质上是把常见工程能力抽离出来，减少每个业务模块中重复实现的风险。
+从设计来看，这个模块属于“框架底座”，本质上是把常见工程能力抽离出来，减少各业务模块重复实现的风险。
 
 ## 模块位置
 
 - 代码目录：`ATRI/utils`
 - 关键文件：
   - `ATRI/utils/__init__.py`
+  - `ATRI/utils/datetime.py`
+  - `ATRI/utils/event.py`
+  - `ATRI/utils/curve.py`
+  - `ATRI/utils/model.py`
   - `ATRI/utils/limiter.py`
   - `ATRI/utils/lock.py`
   - `ATRI/utils/img_editor.py`
@@ -31,14 +37,15 @@
 
 ## 1. 总体设计
 
-`ATRI.utils` 采用“工具类 + 函数 + 数据模型”混合组织方式，核心特点有：
+`ATRI.utils` 采用“工具类 + 函数 + 数据模型 + 事件机制”混合组织方式，核心特点有：
 
-1. 强调“最小依赖”：多数工具类不依赖复杂框架，只依赖标准库或稳定第三方库。
-2. 面向运行时使用：大量工具用于消息发送、任务调度、系统状态展示、缓存处理。
-3. 以直接调用为主：没有复杂抽象层，通常适合插件快速接入。
-4. 兼顾开发效率和稳定性：例如 `RequestClient`、`FileDealer`、`PackageManager` 都是典型的“实用工具类”。
+1. 强调“最小依赖”：多数工具直接依赖标准库或稳定的第三方库，例如 `httpx`、`psutil`、`Pillow`。
+2. 面向运行时使用：大量工具用于消息发送、任务调度、状态展示、缓存和日志处理。
+3. 面向直接调用：缺少过重的抽象层，通常适合插件在运行时直接接入。
+4. 兼顾开发效率和稳定性：例如 `RequestClient`、`FileDealer`、`PackageManager`、`BaseEvent` 等都属于实用型公共能力。
+5. 兼容新版本 Python：如 `datetime.py` 使用 `ZoneInfo`，`model.py` 使用 Pydantic v2 的 `model_validate` / `model_dump()`。
 
-这使得它非常适合以上层模块继续调用，而不是优先设计成大型工程框架。
+这使得它非常适合上层模块继续调用，而不是优先设计成一个复杂工程框架。
 
 ---
 
@@ -58,13 +65,20 @@ def gen_random_str(k: int) -> str:
 - 生成随机文件名
 - 临时标识符
 - 任务 ID / 会话 ID
-- 验证码场景的占位标识
+- 验证码或占位标识
 
-它的实现非常简单：直接用 Python 的 `string.ascii_letters + string.digits` 做字符池，再从中随机采样。
+它使用 Python 的 `string.ascii_letters + string.digits` 作为字符池，再以随机采样生成结果。
 
 ---
 
-## 3. 时间处理：`TimeDealer`
+## 3. 时间处理：`TimeDealer` 与 `ATRI.utils.datetime`
+
+项目中时间工具并不只在 `__init__.py` 中，一共有两层：
+
+- `TimeDealer`：按时间戳进行格式化和转换
+- `ATRI.utils.datetime`：以统一时区管理为核心的函数模块
+
+### 3.1 `TimeDealer`
 
 ```python
 class TimeDealer:
@@ -73,38 +87,49 @@ class TimeDealer:
         self.timezone = timezone
 ```
 
-### 3.1 `to_str()`
+`TimeDealer` 的职责是把 Unix 时间戳转换为可读文本或 `datetime` 对象：
 
 ```python
 def to_str(self, format: str = "%Y-%m-%d %H:%M:%S") -> str:
     return datetime.fromtimestamp(self.timestamp, self.timezone).strftime(format)
-```
 
-含义：将秒级时间戳转成指定格式的字符串，例如：
 
-```python
-TimeDealer(1700000000, timezone.utc).to_str()
-# '2023-11-14 22:13:20'
-```
-
-### 3.2 `to_datetime()`
-
-```python
 def to_datetime(self) -> datetime:
     return datetime.fromtimestamp(self.timestamp, self.timezone)
-```
 
-这适合需要继续参与日期计算的场景。
 
-### 3.3 `int_now()`
-
-```python
 def int_now(self) -> float:
     time = datetime.fromtimestamp(self.timestamp, self.timezone)
     return time.hour + time.minute / 60
 ```
 
-这个方法把当前时刻转换成一天中的“浮点时段”，例如 9:30 会变成 9.5。它的用途更多偏向“时间段比较”，比如判断是否在某个活跃时段内。
+其中 `int_now()` 会把时间转换成一天中的浮点时段，例如 `09:30 -> 9.5`，适合做“时间段判断”。
+
+### 3.2 `ATRI.utils.datetime`
+
+`datetime.py` 是较新的统一时区模块，允许项目在运行时切换时区，而不是直接硬编码：
+
+```python
+TIMEZONE = ZoneInfo("Asia/Shanghai")
+
+def set_timezone(tz_name: str):
+    global TIMEZONE
+    try:
+        TIMEZONE = ZoneInfo(tz_name)
+    except ZoneInfoNotFoundError:
+        TIMEZONE = ZoneInfo("Asia/Shanghai")
+```
+
+它提供以下函数：
+
+- `now(tz_name=None)`：返回当前时间
+- `today(tz_name=None)`：返回当前日期
+- `fromtimestamp(fromtimestamp, tz_name=None)`：按时间戳生成 `datetime`
+- `date_fromtimestamp(timestamp, tz_name=None)`：按时间戳生成 `date`
+- `now_timestamp(tz_name=None)`：返回当前时间戳
+- `now_time(tz_name=None)`：返回当前时刻
+
+这个模块的意义在于：不同业务层和配置项可以共享统一时区，不需要反复手写 `timezone.utc` 或 `pytz` 逻辑。
 
 ---
 
@@ -139,9 +164,7 @@ def del_aim(self) -> list:
     return self.lst
 ```
 
-这个方法会删除列表中所有匹配的目标元素，并返回处理后的新列表。
-
-如果业务中频繁做“清洗列表”“去重”这种操作，这个工具很适合直接使用。
+这个方法会删除列表中所有匹配的目标元素，并返回处理后的列表。适合“清洗数据”“去重”“统一过滤”等操作。
 
 ---
 
@@ -175,13 +198,11 @@ def check_cq_code(self) -> bool:
         return True
 ```
 
-它会检查消息中是否出现以下风险：
+它会检查消息中是否存在：
 
 - 图片链接不是腾讯图床域名
-- 可能存在 CQ 码注入风险
+- CQ 码注入风险
 - 某些敏感类型被识别为危险内容
-
-这类校验适合在消息处理链前端使用，做一层安全过滤。
 
 ### 5.2 `check_image_url`
 
@@ -194,7 +215,7 @@ def check_image_url(self) -> bool:
         return True
 ```
 
-它的职责非常简单：判断文本里是否包含允许的腾讯图床链接。
+它的职责很简单：判断文本中是否包含允许的腾讯图床地址。适合在消息发送前做安全预检。
 
 ---
 
@@ -207,19 +228,17 @@ class FileDealer:
         self.encoding = encoding
 ```
 
-`FileDealer` 采用异步 IO 方式进行文件操作，适合在 asyncio 环境中使用。核心方法为：
+`FileDealer` 是异步文件处理工具，适合在 `asyncio` 环境中使用。核心方法有：
 
 - `write(content)`：异步写入文本
 - `write_json(content)`：写入 JSON 内容
 - `read()`：读取整个文件
 - `readline()`：读取一行
-- `readlines()`：读取所有行
+- `readlines()`：读取全部行
 - `readtable()`：判断文件是否可读
-- `json()`：通过 `json.loads(self.path.read_bytes())` 直接读 JSON
+- `json()`：同步读取 JSON 文件并返回 Python 对象
 
-实现上使用 `aiofiles.open()`，因此非常适合和异步任务、缓存文件、配置保存等场景组合使用。
-
-注意：这里的 `json()` 是同步方法，直接读取路径内容，并转成 Python dict。这使其便于临时脚本或配置读取，但不算完全异步。
+实现上使用 `aiofiles.open()`，因此适合和缓存、配置保存、运行时日志等场景组合使用。
 
 ---
 
@@ -257,11 +276,11 @@ def deal(self) -> str:
 
 它的逻辑很简单：
 
-- 先判断图片大小是否已经满足目标阈值
-- 如果过大，就不断按比例缩小
-- 每次缩放后再重新保存，直到大小小于目标参数 `kb`
+- 先判断图片大小是否已满足目标大小阈值
+- 若超出阈值，则循环缩小图片
+- 每次重新保存后再次检查尺寸
 
-适合发送图片前压缩，尤其在网络带宽或协议限制下非常有价值。
+它适合在发送图片前压缩，尤其在网络带宽或协议限制下很有价值。
 
 ---
 
@@ -278,16 +297,13 @@ class Translate:
 - `to_tradition()`：把简体字转换成繁体字
 - `to_simple()`：把繁体字转换成简体字
 
-实现方式：
-
-- 对每个字符先在 `SIMPLE` 中查找索引
-- 再在 `TRADITION` 中对应位置取出转化后的字符
-
-它属于“表驱动”的中文转换实现，优点是简单、可用；缺点是字符表体积较大，且转换规则依赖内置映射字符串。
+核心思想是：对每个字符在映射表中找对应位置，然后取出目标字符。它适合批量文本转换，但也依赖很大的内置映射表。
 
 ---
 
-## 9. 限流器：`Limiter`
+## 9. 限流器：`Limiter` / `RateLimiter` / `LimitedQueue`
+
+### 9.1 `Limiter`
 
 ```python
 class Limiter:
@@ -297,9 +313,7 @@ class Limiter:
         self.count = defaultdict(int)
 ```
 
-这是一个简单的“键值计数器式限流”实现。
-
-### 9.1 `check(key)`
+这是一个简单的“键值计数器式限流”实现：
 
 ```python
 def check(self, key: str) -> bool:
@@ -313,21 +327,10 @@ def check(self, key: str) -> bool:
 它常用于：
 
 - 限制某个用户发言频率
-- 限制某个操作的高频触发
-- 执行前验证是否允许继续处理
+- 限制某个操作高频触发
+- 在执行前判断是否可继续处理
 
-### 9.2 `increase(key)`
-
-```python
-def increase(self, key: str) -> None:
-    self.count[key] += 1
-```
-
-此实现较轻量，适合某些简单的冷却场景；但它没有真正的时间窗口清理逻辑，所以更偏“计数器型”而非完整的时间窗型限流。
-
----
-
-## 10. 时间窗口限流：`RateLimiter`
+### 9.2 `RateLimiter`
 
 ```python
 class RateLimiter:
@@ -337,7 +340,7 @@ class RateLimiter:
         self.calls = deque()
 ```
 
-这是更符合经典“滑动窗口”思想的限流器。
+它遵循经典“滑动窗口”思路：
 
 ```python
 def is_allowed(self):
@@ -352,21 +355,13 @@ def is_allowed(self):
         return False
 ```
 
-它会：
-
-- 记录最近的调用时间
-- 清理窗口外的数据
-- 若当前窗口内计数未超阈值则允许继续执行
-
-适用场景：
+它适合：
 
 - API 限流
 - 任务触发控制
 - 高频事件节流
 
----
-
-## 11. 有长度限制的缓存队列：`LimitedQueue`
+### 9.3 `LimitedQueue`
 
 ```python
 class LimitedQueue:
@@ -375,39 +370,17 @@ class LimitedQueue:
         self.max_size = max_size
 ```
 
-### 11.1 `add(item)`
+它有固定长度，超出长度时自动丢弃最旧元素，适合：
 
-```python
-def add(self, item):
-    if len(self.queue) == self.max_size:
-        oldest = self.queue.popleft()
-        self.queue.append(item)
-        return oldest
-    else:
-        self.queue.append(item)
-        return None
-```
-
-它的特点是：
-
-- 队列固定最大长度
-- 新元素加入时若队列满，则自动丢弃最旧元素
-- 适合短时缓存和最近记录保存
-
-### 11.2 `get_data()`
-
-```python
-def get_data(self):
-    return list(self.queue)
-```
-
-这是一个很轻量的数据缓冲结构，常用于近期操作记录、短时消息缓存等。
+- 短时缓存
+- 最近记录保留
+- 事件回放 / 采样缓存
 
 ---
 
-## 12. 并发锁：`SingleLock` 与 `GroupLock`
+## 10. 并发锁：`SingleLock` 与 `GroupLock`
 
-### 12.1 `SingleLock`
+### 10.1 `SingleLock`
 
 ```python
 class SingleLock:
@@ -415,25 +388,9 @@ class SingleLock:
         self._lock = Lock()
 ```
 
-通过 `threading.Lock()` 包装一个函数执行过程：
+它用 `threading.Lock()` 包装函数调用过程，保证同一时刻只有一个调用进入临界区，适合保护共享状态或避免重复执行。
 
-```python
-def run(self, func):
-    def wrapper(*args, **kwargs):
-        self._lock.acquire()
-        try:
-            r = func(*args, **kwargs)
-        except Exception:
-            self._lock.release()
-            raise
-        self._lock.release()
-        return r
-    return wrapper
-```
-
-它的核心思想是：保证同一时刻只有一个调用进入临界区，适合保护共享状态或避免重复执行。
-
-### 12.2 `GroupLock`
+### 10.2 `GroupLock`
 
 ```python
 class GroupLock:
@@ -444,43 +401,142 @@ class GroupLock:
 `GroupLock` 与 `SingleLock` 的区别在于：
 
 - 它按 key 维度管理多个锁
-- 允许不同资源分别加锁
-- 适合多用户、多任务场景
+- 不同资源可分别加锁
+- 更适合多用户、多任务场景
 
-例如：
+支持：
 
-```python
-locks = GroupLock()
-locks.run("user_123", some_func)
-```
-
-它通过 `__getitem__` 自动创建锁，且支持装饰器方式：
-
-```python
-@locks.lock("user_123")
-def foo():
-    ...
-```
-
-这使得它在多资源并发保护方面比普通锁更灵活。
+- `locks.run("user_123", some_func)`
+- 装饰器形式 `@locks.lock("user_123")`
 
 ---
 
-## 13. 图片编辑：`IMGEditor`
+## 11. 事件系统：`event.py`
 
-`IMGEditor` 是 ATRI 中最有代表性的图像处理工具之一，位于 `ATRI/utils/img_editor.py`。
+`ATRI.utils.event` 是一个较新的通用事件总线模块，用于实现“事件体 + 监听器 + 发布/通知”机制。
+
+### 11.1 `BaseEvent`
+
+```python
+class BaseEvent:
+    def __init__(self, event_name):
+        self.event_name = event_name
+        self.error = False
+        self.error_listeners = []
+        self.result = {}
+```
+
+它代表一次事件：
+
+- `add_result(result, priority=10)`：添加事件结果
+- `get_result()`：按优先级顺序获取结果
+
+### 11.2 `BaseListener`
+
+`BaseListener` 是事件监听器的基础抽象，`InnerListener` 会把普通函数转换为监听器，`AsyncInnerListener` 则支持异步函数。
+
+### 11.3 `BaseEvents` / `AsyncBaseEvents`
+
+```python
+class BaseEvents:
+    def __init__(self, stop_when_error: bool = False):
+        self.listeners = {}
+        self.stop_when_error = stop_when_error
+```
+
+它提供：
+
+- `subscribe(listener, priority=10)`：注册监听器
+- `unsubscribe(listener_name)`：取消监听器
+- `notify(event)`：通知所有监听器
+- `handle(priority=10)`：装饰器方式注册处理函数
+
+`AsyncBaseEvents` 版本则支持异步监听器，并在异常时按错误监听器聚合输出。这个模块非常适合把“业务动作”和“事件响应”解耦。
+
+---
+
+## 12. 数据模型基类：`model.py`
+
+`ATRI.utils.model` 提供了一个 Pydantic 2 的基础模型封装：
+
+```python
+class BaseModel(PBaseModel):
+    @classmethod
+    def read_from_file(cls, path):
+        if not os.path.exists(path):
+            raise IOError("找不到指定文件")
+        with open(path, 'r', encoding='utf-8') as file:
+            model = cls.model_validate(json.load(file))
+        return model
+
+    def write_into_file(self, path):
+        with open(path, 'w', encoding='utf-8') as file:
+            json.dump(self.model_dump(), file, indent=4, ensure_ascii=False)
+```
+
+这个模型适合：
+
+- 从 JSON 文件读入配置
+- 给模块定义结构化数据模型
+- 把配置对象直接写回磁盘
+
+它是机器状态、版本信息、配置对象等的基础承载方式。
+
+---
+
+## 13. 随机概率与等级管理：`curve.py`
+
+`curve.py` 里包含两类辅助工具。
+
+### 13.1 `IntToBoolRandom`
+
+```python
+class IntToBoolRandom:
+    def __init__(self, random_num, max_num):
+        self.random_num = random_num
+        self.max_num = max_num
+```
+
+它用于生成“基于数值变化的随机布尔值”，返回 `True` 的概率会随着输入值增大而变化。适合：
+
+- 概率事件
+- 经验值随机判定
+- 游戏式掉落或稀有度计算
+
+### 13.2 `LvlManager`
+
+```python
+class LvlManager:
+    def __init__(self, base_num, multiple):
+        self.base_num = base_num
+        self.multiple = multiple
+```
+
+它能够把经验值转成等级，并允许计算当前等级剩余经验：
+
+- `to_lvl(exp)`：将经验值映射到等级
+- `get_left_exp(exp, lvl=None)`：计算还差多少经验升级
+- `get_lvl_exp(lvl)`：返回当前等级所需经验
+
+此工具很适合用于任务、签到、等级系统等数据场景。
+
+---
+
+## 14. 图片编辑：`IMGEditor`
+
+`IMGEditor` 是 ATRI 中最典型的图像处理工具，位于 `ATRI/utils/img_editor.py`。
 
 它基于 Pillow (`PIL`) 实现，支持：
 
 - 调整图片尺寸
 - 绘制圆角矩形背景
-- 写入文本（普通、右对齐、中间对齐、自动换行）
+- 写入文本（左对齐 / 右对齐 / 居中对齐 / 自动换行）
 - 添加边框
 - 添加圆形头像
 - 生成 Base64 / JPEG bytes
 - 保存图片
 
-### 13.1 构造函数
+关键特征：
 
 ```python
 class IMGEditor:
@@ -491,81 +547,15 @@ class IMGEditor:
             self.img = image
 ```
 
-它支持两种输入：
+它常用于：
 
-- 原始图片 bytes
-- 已打开的 Pillow `Image.Image`
-
-### 13.2 `resize()`
-
-```python
-def resize(self, target_width, target_height) -> "IMGEditor":
-    width, height = self.img.size
-    scale = max(target_width / width, target_height / height)
-```
-
-它通过最大缩放比例保证图片能覆盖目标区域，并在必要时进行裁剪，适合生成统一规格图片。
-
-### 13.3 `add_text()` / `add_right_text()` / `add_middle_text()`
-
-这些方法均使用：
-
-```python
-ImageDraw.Draw(self.img)
-ImageFont.truetype(font_path, font_size)
-```
-
-来在图片上写文本。区别只有对齐方式：
-
-- `add_text()`：左对齐
-- `add_right_text()`：右对齐
-- `add_middle_text()`：居中对齐
-
-### 13.4 `add_auto_text()`
-
-这是最实用的文本排版能力：
-
-```python
-def add_auto_text(self, x, y, text, font_size, ..., max_width=None, line_spacing=None, vertical_align='top')
-```
-
-它会：
-
-- 自动按字符长度计算换行
-- 根据 `max_width` 进行分行
-- 支持 `top / center / bottom` 三种纵向对齐方式
-
-非常适合生成图文消息卡片，例如排行榜、公告卡片、签到图等。
-
-### 13.5 `to_bytes()` / `to_base64()`
-
-```python
-def to_bytes(self) -> bytes:
-    bytes_io = BytesIO()
-    self.img.save(bytes_io, format='JPEG')
-    return bytes_io.getvalue()
-```
-
-```python
-def to_base64(self) -> str:
-    ...
-    return f'base64://{base64_encoded}'
-```
-
-这使得 `IMGEditor` 非常适合直接输出给 NoneBot 或其他消息通道用于图片发送。
-
-### 13.6 `save_rgb()`
-
-```python
-def save_rgb(self, save_path):
-    self.img.convert("RGB").save(save_path)
-```
-
-用于保存成标准 JPEG 图像。
+- 生成发图卡片
+- 组装排行榜/签到图
+- 生成消息中的图文组合内容
 
 ---
 
-## 14. HTTP 请求：`RequestClient`
+## 15. HTTP 请求：`RequestClient`
 
 ```python
 class RequestClient:
@@ -574,19 +564,19 @@ class RequestClient:
         self.use_log = use_log
 ```
 
-它是在 `httpx` 上做了一层封装，提供：
+它通过 `httpx` 封装：
 
 - `get()`
 - `post()`
 - `delete()`
 
-最重要的特点是：
+并支持：
 
-- 使用异步 `AsyncClient`
-- 默认打印请求日志
-- 读取配置中的代理和超时参数
+- 异步 `AsyncClient`
+- 日志输出
+- 代理和超时配置
 
-在 `request.py` 中，模块级别还提供了函数式封装：
+模块级函数也提供了同名封装：
 
 ```python
 async def get(url: str, verify: bool = False, **kwargs):
@@ -594,11 +584,11 @@ async def get(url: str, verify: bool = False, **kwargs):
         return await client.get(url, **kwargs)
 ```
 
-这让它可直接用于外部 API 访问，例如 GitHub 查询、天气查询、第三方服务请求等。
+适合外部 API 查询、内容抓取、服务访问等场景。
 
 ---
 
-## 15. 包管理：`PackageManager`
+## 16. 包管理：`PackageManager`
 
 ```python
 class PackageManager:
@@ -606,13 +596,13 @@ class PackageManager:
         self.executable = executable or sys.executable
 ```
 
-`PackageManager` 负责 Python 包的安装、卸载和检查。功能包括：
+`PackageManager` 负责 Python 包的安装、卸载和检查：
 
 - `install(packages, upgrade=False)`
 - `uninstall(packages, yes=True)`
 - `install_requirements(requirements_file)`
-- `freeze()`：返回 `pip freeze` 的原始结果
-- `list_installed()`：整理为 `[{"name": ..., "version": ...}]`
+- `freeze()`：返回 `pip freeze` 结果
+- `list_installed()`：整理成 `[{"name": ..., "version": ...}]`
 - `search(package_name)`
 - `show(package_name)`
 
@@ -622,37 +612,31 @@ class PackageManager:
 [python_executable, "-m", "pip", "install", ...]
 ```
 
-这使得它适合：
-
-- 自动安装缺失依赖
-- 动态扩展功能包
-- 在运行时维护 Python 环境
+适合在运行时自动补齐依赖或拓展插件所需的 Python 包。
 
 ---
 
-## 16. SQLite 辅助层：`Cursor` / `DBTable` / `DataBase`
+## 17. SQLite 辅助层：`Cursor` / `DBTable` / `DataBase`
 
-### 16.1 `Cursor`
+### 17.1 `Cursor`
 
-`Cursor` 是基础封装，用来简化一条 SQL 的执行流程：
+`Cursor` 是对 SQLite `cursor` 的包装，负责：
 
 - `insert()`
 - `update()`
 - `delete()`
 - `execute()`
 
-它以 `sqlite3.Connection.cursor()` 作为底层对象，并通过上下文管理器实现提交逻辑：
+并通过 `with` 语法支持自动提交：
 
 ```python
 with self.get_cursor() as cursor:
     cursor.insert(...)
 ```
 
-如果没有异常，自动 `commit()`。
+### 17.2 `DBTable`
 
-### 16.2 `DBTable`
-
-`DBTable` 是对单表操作的进一步封装：
+`DBTable` 是单表操作封装：
 
 - `select_all()`
 - `select()`
@@ -660,13 +644,9 @@ with self.get_cursor() as cursor:
 - `update()`
 - `delete()`
 
-它的优点是：
+适合小型本地缓存和轻量数据表操作。
 
-- 适合小型本地表结构
-- 比直接写 SQL 更容易维护
-- 可作为插件缓存或轻量数据库支撑
-
-### 16.3 `DataBase`
+### 17.3 `DataBase`
 
 ```python
 class DataBase:
@@ -679,18 +659,16 @@ class DataBase:
 - 打开或创建 SQLite 数据库
 - 创建 `TABLEVERSION` 记录表
 - `get_table(table_name, table_content, table_version, update_dp=None)` 自动建表并维护版本
-- `get_exist_table()` 获取已存在表
+- `get_exist_table()` 获取已有表
 - `disconnect()` 关闭连接
 
-这个设计适用于“少量表 + 轻量表结构变更”的场景，而不是大型 ORM 场景。
-
-> 虽然它不是 Tortoise ORM 这种完整数据库层，但在这个项目中，它是一种隐形的轻量本地数据管理方案。
+这种设计适合“少量表 + 轻量结构升级”的场景，不适合大规模 ORM 场景。
 
 ---
 
-## 17. 系统状态获取：`machine.py`
+## 18. 系统状态获取：`machine.py`
 
-`machine.py` 负责获取当前机器状态，主要是：
+`machine.py` 负责获取当前机器状态，主要包括：
 
 - `get_platform_info()`
 - `get_cpu_info()`
@@ -698,9 +676,9 @@ class DataBase:
 - `get_disk_info()`
 - `get_net_info()`
 
-同时，它依赖 `psutil` 统计运行状态，并在 Windows 下使用 `wmi` / `win32com` 读取更细粒度的系统信息。
+它依赖 `psutil` 统计运行状态，并在 Windows 下使用 `wmi` / `win32com` 提取更细粒度的系统信息。
 
-### 17.1 核心返回模型
+### 18.1 核心返回模型
 
 ```python
 class PlatformInfo(BaseModel):
@@ -717,16 +695,16 @@ class CpuInfo(BaseModel):
     process: int
 ```
 
-这些模型非常适合用于：
+这些模型非常适合：
 
 - 面板展示
 - 运行状态监控
 - 运维脚本汇报
 - 机器人状态输出
 
-### 17.2 磁盘与网络吞吐
+### 18.2 磁盘和网络吞吐
 
-在 `machine.py` 中，磁盘和网络状态使用 APScheduler 定时任务更新：
+磁盘和网络速率使用 APScheduler 定时任务更新：
 
 ```python
 @scheduler.scheduled_job("interval", seconds=1, misfire_grace_time=15)
@@ -734,82 +712,66 @@ async def _():
     ...
 ```
 
-这样可以让 `get_disk_info()` 和 `get_net_info()` 获取最近一秒的增量速率，而不是每次都重新计算全局量。实现上使用：
-
-- `psutil.disk_io_counters()`
-- `psutil.net_io_counters()`
-
-这使得它更适合做实时状态展示，比如：
-
-- 当前网速
-- 当前磁盘读写速度
-- 单机资源利用率
+这样 `get_disk_info()` 和 `get_net_info()` 能返回最近一秒的增量速度，而不是每次都重新扫描全局值。
 
 ---
 
-## 18. 版本检查：`check_update.py`
+## 19. 版本检查：`check_update.py`
 
-`check_update.py` 使用 GitHub REST API 抓取最新提交和发行版本：
+`check_update.py` 使用 GitHub REST API 获取最新发布版本和更新时间：
 
-- `REPO_COMMITS_URL`
 - `REPO_RELEASE_URL`
+- `ReleaseInfo`
+- `CheckUpdate.get_latest_info()`
+- `get_version_num()`
+- `is_newer_version()`
 
-### 18.1 `show_latest_commit_info()`
+当前实现的关键点：
 
-```python
-@classmethod
-async def show_latest_commit_info(cls) -> tuple | None:
-    data = await cls._get_commits_info()
-    commit_data = data[0]
-```
+- 使用 GitHub Release API 获取最新版本信息
+- 解析 `release_data["name"]` 作为版本名
+- 把 UTC 时间转换为 `Asia/Shanghai` 时间显示
+- 使用字符串规则比较版本大小，避免直接依赖复杂的语义版本库
 
-它会返回：
-
-- commit message
-- commit SHA 前 5 位
-- 中国时区本地时间
-
-### 18.2 `show_latest_version()`
-
-```python
-@classmethod
-async def show_latest_version(cls) -> tuple:
-    data = await cls._get_release_info()
-    release_data = data[0]
-```
-
-它返回最新发行版名和更新时间。
-
-### 18.3 `get_version_num()`
-
-```python
-def get_version_num(v: str):
-    return int(v.replace("Release", "Patch0").replace("Patch", ""))
-```
-
-这种“字符串转数值”的设计用于比较版本大小和判定是否需要更新。
+这使得框架能够在运行时提示用户当前版本是否过旧，并在需要时触发更新提示。
 
 ---
 
-## 19. 使用建议
+## 20. 新增与修改模块总结
+
+在当前代码中，`ATRI.utils` 已不仅是原先的几个老工具类，而是包含了更完整的公共基础设施：
+
+- `datetime.py`：统一时区工具，支持项目级时间管理
+- `event.py`：事件总线系统，支持同步/异步监听
+- `curve.py`：概率和经验等级工具
+- `model.py`：Pydantic 2 基础模型，支持文件输入/输出
+- `machine.py`：增强的系统状态监测，包含磁盘/网络速率统计
+- `check_update.py`：版本更新检查逻辑
+
+这些模块的加入，说明 `ATRI.utils` 已经从“简单函数集合”进一步发展成“框架底座式的通用工具池”。
+
+---
+
+## 21. 使用建议
 
 如果你在开发 ATRI 插件或扩展功能，可以优先按需求选用这些工具：
 
 - 需要随机 ID / 简单标识：`gen_random_str()`
-- 需要时间处理：`TimeDealer`
+- 需要时间处理：`TimeDealer` / `ATRI.utils.datetime`
 - 需要标签、清洗和去重：`ListDealer`
 - 需要消息校验：`MessageChecker`
 - 需要异步配置保存/缓存：`FileDealer`
 - 需要图片消息：`IMGEditor`
-- 需要限流：`Limiter` / `RateLimiter`
+- 需要限流：`Limiter` / `RateLimiter` / `LimitedQueue`
 - 需要线程安全：`SingleLock` / `GroupLock`
 - 需要本地轻量存储：`DataBase` / `DBTable`
+- 需要事件编排：`BaseEvent` / `BaseEvents` / `AsyncBaseEvents`
 - 需要系统监控：`get_cpu_info()` / `get_mem_info()` / `get_disk_info()` / `get_net_info()`
 - 需要自动检测更新：`CheckUpdate`
 
 ---
 
-## 20. 总结
+## 22. 总结
 
 `ATRI.utils` 的本质，是一个“工程辅助层”。它没有强烈的业务语义，但它决定了插件是否能更快速、更安全、更稳定地完成常见工作：
 
@@ -818,7 +780,8 @@ def get_version_num(v: str):
 - 生成图片
 - 限制频率
 - 保护共享资源
+- 组织事件流
 - 监测系统状态
 - 管理依赖与版本信息
 
-因此，对于 ATRI 的开发者来说，理解这个模块并不是“看资料”，而是理解框架底层的运行方式：框架如何在不显式引入重型库的前提下，为业务层提供稳定的基础设施支持。
+因此，对于 ATRI 的开发者来说，理解这个模块并不仅仅是“看资料”，而是在理解框架底层的运行方式：它如何在不显式引入重型库的前提下，为业务层提供稳定的基础设施支持。
