@@ -19,7 +19,7 @@ ATRI 在**初次启动**后会生成 `config.yml`，其为 ATRI 运行配置。�
 
 ```yaml
 # 设置参考文档: https://lokyoh.github.io/ATRI-LK-docs/config.html
-ConfigVersion: "1.1.0"
+ConfigVersion: "1.1.2"
 
 BotConfig:
   host: "127.0.0.1"
@@ -33,6 +33,7 @@ BotConfig:
   access_token: "atri"
   proxy: ""
   request_timeout: 30
+  timezone: "Asia/Shanghai"
 
 BrowsConfig:
   browser: "chromium"
@@ -69,6 +70,7 @@ WebUIConfig:
 - access_token：ATRI 同协议端（例如 gocqhttp）通信时的密钥。
 - proxy：ATRI 运行时对外发送请求的代理，格式参考：`proxy: "http://127.0.0.1:8000"`。
 - request_timeout：ATRI 运行时对外发送请求的超时时间，单位为秒。
+- timezone：日期模块所采用的时区。
 
 ### BrowsConfig
 

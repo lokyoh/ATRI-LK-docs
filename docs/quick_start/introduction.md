@@ -5,28 +5,29 @@ title: 介绍
 
 # 介绍
 
-`ATRI-LK版`修改自[`Kyomotoi`](https://github.com/Kyomotoi)的[`ATRI`](https://github.com/Kyomotoi/ATRI)，主要以核心插件`lkbot`为基础进行扩展，此版本对本体进行了修改，同时修改与移除部分原有的插件。
+アトリは、高性能ですから！
 
-`ATRI` 是一个以 [ANIPLEX](https://aniplex-exe.com/) 发行的 [ATRI-My Dear Moments-](https://atri-mdm.com/) 出场人物 ATRI 为原型及灵感启发的厨力项目。
+ATRI-LK 致力于在 QQ/OneBot 即时聊天平台中复现一只功能丰富、表现稳定的机器人。项目基于原 ATRI 开发，并加入更多扩展功能。
 
-为🐧即时聊天工具中复现一只优秀的功能性机器人是本项目的目标。
-
-本项目新版采用[napcatAPI](https://napcat.apifox.cn/)功能，在非[NapCatQQ](https://napneko.github.io/)机器人使用可能报错
+> 本项目新版部分功能依赖 [napcatAPI](https://napcat.apifox.cn/)。在非 [NapCatQQ](https://napneko.github.io/) 机器人环境下可能会出现兼容性问题。
 
 ### 声明
 
 **一切开发旨在学习，请勿用于非法用途**
 
-本项目中所使用的任何有关 [ATRI](https://atri-mdm.com/) 的图标、LOGO，解释权、著作权均归 [ANIPLEX](https://aniplex-exe.com/)。你可以[在此](https://aniplex-exe.com/guidelines/)查看相关内容。
+- 原项目地址：[Kyomotoi/ATRI](https://github.com/Kyomotoi/ATRI)
+- 项目名称与灵感来源于 [ANIPLEX](https://aniplex-exe.com/) 发行的 [ATRI-My Dear Moments-](https://atri-mdm.com/)
+- 本项目中涉及的 ATRI 相关图标、LOGO 等版权归 [ANIPLEX](https://aniplex-exe.com/) 所有
+- 相关使用规范请查阅：[ANIPLEX 使用指南](https://aniplex-exe.com/guidelines/)
 
 欢迎来到QQ群交流:[ATRI-LK交流群](https://qm.qq.com/q/8Gx7UxXnA4)
 
 ## 特性
 
-除主页所展示的特性，我们还有：
-
-- 兼容 NoneBot2 生态：使用 NoneBot2 进行项目底层构建，使得 ATRI 能很好地融入 NoneBot2 的生态，通过 ATRI 你甚至可以控制*其它来自 [NoneBot2 Store](https://v2.nonebot.dev/store) 的插件。
-- 遵循 OneBot v11 规范：具体请参考：[OneBot 标准文档-生态](https://onebot.dev/ecosystem.html#onebot-11-10-cqhttp)。
+- 使用 [NoneBot 2](https://v2.nonebot.dev/) 作为底层框架
+- 在原 ATRI 基础上增加更多功能和插件支持
+- 遵循 [OneBot v11](https://onebot.dev/) 标准
+- 支持可扩展插件系统，便于二次开发与个性化配置
 
 ::: tip
 *：仅当通过 ATRI 内的 `管理` 添加 Nonebot2 插件时，才可控制。非经过 ATRI 安装的任何插件，例如直接将插件文件拖进 plugins，均**无法触发**。
