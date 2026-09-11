@@ -83,3 +83,118 @@ WebUIConfig:
 - username: 登录用户名。默认值`admin`
 - password: 登录密码。默认值为随机生成值
 - secret: jwt密钥。默认值为随机生成值
+
+
+## Agent配置
+
+::: tip
+如果有更多需求请提交issu或联系作者。
+:::
+
+### 模型配置
+
+位置:`data\config\system\provider.yml`
+
+默认配置:
+
+::: details
+
+```yaml
+siliconflow:
+  provider_name: siliconflow
+  provider_type: openai
+  url: https://api.siliconflow.cn/v1
+  api_key: ""
+  models:
+  - name: siliconflow/DeepSeek-V4-Flash
+    model: deepseek-ai/DeepSeek-V4-Flash
+    temperature: 0.7
+    type: chat
+  - name: siliconflow/qwen3-vl-30
+    model: Qwen/Qwen3-VL-30B-A3B-Instruct
+    temperature: 0.7
+    type: image
+  - name: siliconflow/qwen3-30b
+    model: Qwen/Qwen3-30B-A3B-Instruct-2507
+    temperature: 0.3
+    type: tool
+```
+
+:::
+
+其中:
+
+- provider_name 为模型供应商名称,用于区分不同供应商,不可相同
+- provider_type 为模型api接口类型,目前仅支持`openai`与`gemini`
+- url 为模型api请求地址
+- api_key 为请求时的密钥
+- models 为供应商提供的模型
+
+模型配置:
+
+- name 为模型名称,用于区分不同模型,不可相同
+- model 为调用时使用的模型,由供应商提供,可相同
+- temperature 为模型温度参数
+- type 为模型类型,包含以下类型:`chat`:聊天模型;`image`:图片处理模型;`tool`:工具模型;`reasoning`:思考模型;`action`:实现模型;`language`:语言处理模型;`embedding`:嵌入模型.不过目前仅有前3中为在使用的模型类型
+
+### 插件设置
+
+位置:`data\config\plugins\agent_config.json`
+
+默认配置:
+
+::: details
+
+```json
+{
+    "max_history": 20,
+    "search": {
+        "enable": false,
+        "provider": "",
+        "api_key": ""
+    },
+    "tts": {
+        "enable": false,
+        "model": "",
+        "url": "",
+        "voice_id": "",
+        "api_key": ""
+    },
+    "embedding": {
+        "enable": false,
+        "model": "",
+        "url": "",
+        "api_key": ""
+    }
+}
+```
+
+:::
+
+其中:
+
+- max_history 为保留的历史对话数最大值
+- search 为搜索配置
+- tts 为文本转语言模型配置
+- embedding 为向量化模型配置
+
+search配置:
+
+- enable 为是否启用搜索,否会没有搜索功能
+- provider 为搜索供应商,目前仅支持`tavily`
+- api_key 为请求时的密钥
+
+tts配置:
+
+- enable 为是否启用文本转语言
+- model 为调用时使用的模型,由供应商提供
+- url 为模型api请求地址
+- voice_id 为模型请求时声音id
+- api_key 为请求时的密钥
+
+embedding配置:
+
+- enable 为是否启用向量化模型,与长期记忆有关
+- model 为调用时使用的模型,由供应商提供
+- url 为模型api请求地址
+- api_key 为请求时的密钥
