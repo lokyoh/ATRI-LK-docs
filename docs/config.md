@@ -95,7 +95,7 @@ WebUIConfig:
 
 位置:`data\config\system\provider.yml`
 
-默认配置:
+必须至少配置一个可用的`chat`类型模型;建议至少配置类型为`chat`、`tool`的模型,这两个类型的模型可以使用同一模型;如果需要图片识别的话,需要额外配置一个`image`类型的模型。模型配置请根据自己实际需求与预算进行配置。默认配置:
 
 ::: details
 
