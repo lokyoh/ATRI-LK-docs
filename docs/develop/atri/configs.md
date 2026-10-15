@@ -315,9 +315,10 @@ WebUIConfig:
 
 `plugin_config.py` 中提供了插件级别配置管理。其核心目标是：
 
-- 每个插件都可以拥有自己的配置模型
+- 每个插件都可以拥有自己的配置类
 - 配置自动写入对应 JSON 文件
 - 支持读取、修改、缓存和重新加载
+- 支持前端 WebUI 配置界面（YHN-LK0-024 新增）
 
 ### 5.1 入口对象
 
@@ -327,71 +328,134 @@ plugin_config = {}
 
 这是全局插件配置注册表，键是 service 名称，值是 `PluginConfig` 实例。
 
-### 5.2 类定义
+### 5.2 类定义（YHN-LK0-024 重构后）
+
+从 YHN-LK0-024 版本开始，`PluginConfig` 采用了全新的设计，支持字段定义和前端配置界面：
 
 ```python
-class PluginConfig:
-    def __init__(self, service: str, model: Type[BaseModel]):
-        self.model = model
-        self.path = PLUGIN_CONFIG_DIR / f"{service}_config.json"
+from ATRI.configs.plugin_config import PluginConfig, Field
+
+class MyPluginConfig(PluginConfig):
+    # 定义配置字段
+    enabled = Field(
+        type_=bool,
+        default=True,
+        label="启用插件",
+        description="是否启用此插件"
+    )
+    
+    max_count = Field(
+        type_=int,
+        default=100,
+        label="最大数量",
+        description="最大处理数量限制",
+        min=1,
+        max=1000
+    )
+    
+    # 嵌套配置
+    api_config = Field(
+        type_=dict,
+        default={},
+        label="API配置",
+        description="API相关配置",
+        children={
+            "api_key": Field(
+                type_=str,
+                default="",
+                label="API密钥",
+                description="API访问密钥"
+            ),
+            "timeout": Field(
+                type_=int,
+                default=30,
+                label="超时时间",
+                description="API请求超时时间（秒）",
+                min=1,
+                max=300
+            )
+        }
+    )
 ```
 
 说明：
 
-- `service`：服务名
-- `model`：插件配置对应的 Pydantic 模型
-- `path`：配置文件路径，通常位于插件配置目录
+- 继承 `PluginConfig` 定义配置类
+- 使用 `Field` 定义每个配置字段
+- `Field` 支持类型、默认值、标签、描述、范围限制等
+- 支持嵌套配置（`children` 参数）
+- 配置会自动注册到全局 `plugin_config` 字典
 
-### 5.3 自动创建配置
+### 5.3 Field 参数详解
 
-若配置文件不存在，则创建目录并写入默认模型实例：
+`Field` 构造函数支持以下参数：
 
-```python
-if not os.path.exists(self.path):
-    os.makedirs(os.path.dirname(self.path), exist_ok=True)
-    self.change_config(self.model())
-```
+- `type_`: 字段类型（`bool`, `int`, `float`, `str`, `list`, `dict`）
+- `default`: 默认值
+- `label`: 前端显示的标签
+- `description`: 字段描述
+- `ui_type`: UI类型（可选，自动推断）
+- `options`: 选项列表（用于下拉选择）
+- `min`: 最小值（数字类型）
+- `max`: 最大值（数字类型）
+- `editable`: 是否可编辑
+- `required`: 是否必填
+- `children`: 子字段（用于嵌套配置）
+- `item_type`: 列表项类型
+- `item_field`: 列表项字段定义
+- `key_field`: 字典键字段定义
 
-这意味着插件开发者只需编写模型，即可直接生成相应 JSON 配置文件。
-
-### 5.4 读取与保存
-
-```python
-def load_config(self):
-    try:
-        config = self.model.read_from_file(self.path)
-    except Exception as e:
-        ...
-        config = self.model()
-```
-
-`load_config()` 会尝试从磁盘恢复配置对象；如果失败，则回退为初始默认模型实例。
-
-### 5.5 修改配置
+### 5.4 初始化和使用
 
 ```python
-def change_config(self, value: BaseModel | None = None):
-    if value is None:
-        self._config.write_into_file(self.path)
-    else:
-        value.write_into_file(self.path)
-        self.load_config()
+# 创建配置实例
+config = MyPluginConfig("my_plugin")
+
+# 读取配置值
+enabled = config.get("enabled")
+api_key = config.get("api_config.api_key")  # 支持点号路径
+
+# 修改配置值
+config.set("enabled", False)
+config.set("api_config.timeout", 60)  # 支持点号路径
+
+# 批量更新
+config.update({
+    "enabled": True,
+    "max_count": 200,
+    "api_config.api_key": "new_key"
+})
+
+# 获取完整配置字典
+data = config.to_dict()
+
+# 获取配置描述（用于前端）
+description = config.describe()
 ```
 
-这个方法可以：
+### 5.5 自动保存机制
 
-- 直接把当前内存配置写回磁盘
-- 或者传入新模型对象并立即持久化
+配置支持自动保存功能：
+
+```python
+# 创建时指定自动保存（默认开启）
+config = MyPluginConfig("my_plugin", auto_save=True)
+
+# 修改时自动保存到文件
+config.set("enabled", False)  # 自动保存
+
+# 临时禁用自动保存
+config.set("max_count", 500, auto_save=False)
+config.save()  # 手动保存
+```
 
 ### 5.6 获取实例
 
 ```python
-@classmethod
-def get(cls, service: str) -> "PluginConfig | None":
-    if service in plugin_config:
-        return plugin_config[service]
-    else:
-        return None
+# 获取已注册的配置实例
+config = PluginConfig.get_config("my_plugin")
+if config:
+    enabled = config.get("enabled")
 ```
 
 用于在其他位置读取某个服务的插件配置对象。
@@ -400,42 +464,54 @@ def get(cls, service: str) -> "PluginConfig | None":
 
 ## 6. 服务如何接入插件配置
 
-在 `ATRI/service.py` 中，`Service` 提供了两种关键方法：
+在 `ATRI/service.py` 中，`Service` 提供了获取插件配置的方法：
 
 ```python
 def plugin_config(self) -> PluginConfig | None:
-    return PluginConfig.get(self.service)
-
-
-def add_plugin_config(self, model: type[BaseModel]) -> PluginConfig:
-    return PluginConfig(self.service, model)
+    return PluginConfig.get_config(self.service)
 ```
 
 也就是说，服务初始化时可以如此写：
 
 ```python
 from ATRI.service import Service
-from ATRI.utils.model import BaseModel
+from ATRI.configs.plugin_config import PluginConfig, Field
 
 
-class HelpConfig(BaseModel):
-    enable: bool = True
-    max_history: int = 20
+class HelpConfig(PluginConfig):
+    enable = Field(
+        type_=bool,
+        default=True,
+        label="启用帮助",
+        description="是否启用帮助功能"
+    )
+    max_history = Field(
+        type_=int,
+        default=20,
+        label="历史数量",
+        description="保留的历史记录数量",
+        min=1,
+        max=100
+    )
 
 
 plugin = Service("帮助")
-help_config = plugin.add_plugin_config(HelpConfig).config()
+help_config = HelpConfig("帮助")  # 自动注册到全局
 ```
 
 使用方式：
 
 ```python
 # 读取配置
-cfg = plugin.plugin_config().config()
+cfg = plugin.plugin_config()
+if cfg:
+    enabled = cfg.get("enable")
+    max_history = cfg.get("max_history")
 
 # 修改配置
-cfg.enable = False
-plugin.plugin_config().change_config(cfg)
+if cfg:
+    cfg.set("enable", False)
+    cfg.set("max_history", 30)
 ```
 
 这个机制使插件配置真正成为“服务级硬件”，而不仅仅是散落的常量。
@@ -480,11 +556,12 @@ plugin.plugin_config().change_config(cfg)
 
 ### 8.2 插件配置时
 
-建议优先使用 `PluginConfig` + `BaseModel` 的方式，而不要直接写死 JSON 字典，原因是：
+建议优先使用 `PluginConfig` + `Field` 的方式，而不要直接写死 JSON 字典，原因是：
 
 - 类型更稳定
 - 更方便进行校验
 - 代码更清晰、可维护
+- 支持前端 WebUI 配置界面
 
 ### 8.3 处理旧配置
 
@@ -521,19 +598,18 @@ print(runtime["port"])
 
 ```python
 from ATRI.service import Service
-from ATRI.utils.model import BaseModel
+from ATRI.configs.plugin_config import PluginConfig, Field
 
 
-class DemoConfig(BaseModel):
-    enabled: bool = True
-    timeout: int = 10
+class DemoConfig(PluginConfig):
+    enabled = Field(type_=bool, default=True, label="启用", description="是否启用")
+    timeout = Field(type_=int, default=10, label="超时时间", description="超时时间(秒)")
 
 
 svc = Service("demo")
-pconf = svc.add_plugin_config(DemoConfig)
+pconf = DemoConfig("demo")
 
-cfg = pconf.config()
-print(cfg.enabled)
+print(pconf.get("enabled"))
 ```
 
 ---

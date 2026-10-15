@@ -21,7 +21,7 @@ export default defineConfig({
               gap: 8px;
             }
             .VPNavBarTitle .title::after {
-              content: "YHN-LK0-023";
+              content: "YHN-LK0-024";
               display: inline-flex;
               align-items: center;
               justify-content: center;
@@ -88,6 +88,7 @@ export default defineConfig({
                     items: [
                         { text: '用户', link: '/service/lkbot.md' },
                         { text: '聊天', link: '/service/lkchat.md' },
+                        { text: '智能体', link: '/service/agent.md' },
                         { text: '农场', link: '/service/lkfarm.md' },
                         { text: '宠物', link: '/service/lkpet.md' },
                         { text: '钓鱼', link: '/service/lkfishing.md' },
@@ -144,6 +145,7 @@ export default defineConfig({
                     text: 'ATRI提供的功能',
                     items: [
                         { text: 'ATRI核心模块说明', link: '/develop/atri.md' },
+                        { text: 'Agent智能体模块', link: '/develop/agent.md' },
                         { text: 'bot模块', link: '/develop/atri/bot.md' },
                         { text: 'configs模块', link: '/develop/atri/configs.md' },
                         { text: 'database模块', link: '/develop/atri/database.md' },
@@ -238,6 +240,7 @@ export default defineConfig({
                 items: [
                     { text: '用户', link: '/service/lkbot.md' },
                     { text: '聊天', link: '/service/lkchat.md' },
+                    { text: '智能体', link: '/service/agent.md' },
                     { text: '农场', link: '/service/lkfarm.md' },
                     { text: '宠物', link: '/service/lkpet.md' },
                     { text: '钓鱼', link: '/service/lkfishing.md' },
@@ -294,6 +297,7 @@ export default defineConfig({
                 text: 'ATRI提供的功能',
                 items: [
                     { text: 'ATRI核心模块说明', link: '/develop/atri.md' },
+                    { text: 'Agent智能体模块', link: '/develop/agent.md' },
                     { text: 'bot模块', link: '/develop/atri/bot.md' },
                     { text: 'configs模块', link: '/develop/atri/configs.md' },
                     { text: 'database模块', link: '/develop/atri/database.md' },

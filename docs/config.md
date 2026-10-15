@@ -147,23 +147,11 @@ siliconflow:
 
 ```json
 {
-    "max_history": 20,
+    "max_history": 30,
+    "max_thinking_times": 20,
     "search": {
         "enable": false,
-        "provider": "",
-        "api_key": ""
-    },
-    "tts": {
-        "enable": false,
-        "model": "",
-        "url": "",
-        "voice_id": "",
-        "api_key": ""
-    },
-    "embedding": {
-        "enable": false,
-        "model": "",
-        "url": "",
+        "provider": "tavily",
         "api_key": ""
     }
 }
@@ -173,28 +161,16 @@ siliconflow:
 
 其中:
 
-- max_history 为保留的历史对话数最大值
+- max_history 为保留的历史对话数最大值(包含Agent自己发送的消息),默认值30,最小值10。提高此值可使Agent获取更多历史聊天,但也会消耗更多Token
+- max_thinking_times 为允许Agent最高思考次数,默认值20,最小值5。当遇到需要大量思考情况可提高此值
 - search 为搜索配置
-- tts 为文本转语言模型配置
-- embedding 为向量化模型配置
 
 search配置:
 
-- enable 为是否启用搜索,否会没有搜索功能
+- enable 为是否启用搜索,否则将没有搜索功能
 - provider 为搜索供应商,目前仅支持`tavily`
 - api_key 为请求时的密钥
 
-tts配置:
-
-- enable 为是否启用文本转语言
-- model 为调用时使用的模型,由供应商提供
-- url 为模型api请求地址
-- voice_id 为模型请求时声音id
-- api_key 为请求时的密钥
-
-embedding配置:
-
-- enable 为是否启用向量化模型,与长期记忆有关
-- model 为调用时使用的模型,由供应商提供
-- url 为模型api请求地址
-- api_key 为请求时的密钥
+::: tip YHN-LK0-024 更新
+从 YHN-LK0-024 版本开始,tts 和 embedding 模型配置已迁移至 provider.yml,统一使用 provider 注册方式。请在模型配置中添加对应类型的模型即可。
+:::

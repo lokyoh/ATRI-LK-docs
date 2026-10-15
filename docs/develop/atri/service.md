@@ -728,15 +728,15 @@ async def hello(matcher, event):
 
 ```python
 from ATRI.service import Service
-from ATRI.utils.model import BaseModel
+from ATRI.configs.plugin_config import PluginConfig, Field
 
-class DemoConfig(BaseModel):
-    enabled: bool = True
-    max_times: int = 10
+class DemoConfig(PluginConfig):
+    enabled = Field(type_=bool, default=True, label="启用", description="是否启用")
+    max_times = Field(type_=int, default=10, label="最大次数", description="最大执行次数")
 
 svc = Service("demo")
-config = svc.add_plugin_config(DemoConfig)
-print(config.config().enabled)
+config = DemoConfig("demo")
+print(config.get("enabled"))
 ```
 
 ### 12.3 获取服务信息

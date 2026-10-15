@@ -241,7 +241,492 @@ async def _():
 
 ---
 
-## 8. 插件中的权限控制
+## 8. 其他事件响应器
+
+除了 `on_command`，ATRI 还提供了多种事件响应器类型：
+
+### 8.1 关键词响应 `on_keyword`
+
+当消息包含指定关键词时触发：
+
+```python
+from ATRI.service import Service
+
+plugin = Service("关键词响应", "关键词触发示例", "1.0.0", Service.ServiceType.FUNCTION)
+
+# 当消息包含"早安"或"晚安"时触发
+greeting = plugin.on_keyword(
+    keywords={"早安", "晚安"},
+    docs="问候响应"
+)
+
+@greeting.handle()
+async def _(event):
+    text = event.get_plaintext()
+    if "早安" in text:
+        await greeting.finish("早上好！今天也要加油哦~")
+    else:
+        await greeting.finish("晚安，做个好梦~")
+```
+
+### 8.2 正则表达式响应 `on_regex`
+
+使用正则表达式匹配消息：
+
+```python
+import re
+from ATRI.service import Service
+
+plugin = Service("正则响应", "正则匹配示例", "1.0.0", Service.ServiceType.FUNCTION)
+
+# 匹配数字+单位的格式，如"100kg"、"50m"
+number_match = plugin.on_regex(
+    pattern=r"^(\d+)(kg|m|cm|mm)$",
+    docs="数字单位匹配"
+)
+
+@number_match.handle()
+async def _(matcher):
+    # 获取正则匹配结果
+    matched = matcher.get_regex_result().group()
+    number = matcher.get_regex_result().group(1)
+    unit = matcher.get_regex_result().group(2)
+    
+    await number_match.finish(f"匹配到: {number} {unit}")
+```
+
+### 8.3 通知响应 `on_notice`
+
+响应系统通知事件（如戳一戳、群成员变化等）：
+
+```python
+from nonebot.adapters.onebot.v11.event import PokeNotifyEvent
+from ATRI.service import Service
+
+plugin = Service("通知响应", "通知事件示例", "1.0.0", Service.ServiceType.FUNCTION)
+
+# 响应戳一戳事件
+poke = plugin.on_notice("戳一戳", "处理戳一戳")
+
+@poke.handle()
+async def _(event: PokeNotifyEvent):
+    if event.is_tome():  # 判断是否戳的是机器人
+        await poke.finish("别戳我啦~")
+```
+
+### 8.4 请求响应 `on_request`
+
+响应好友请求、群邀请等：
+
+```python
+from nonebot.adapters.onebot.v11.event import FriendRequestEvent
+from ATRI.service import Service
+
+plugin = Service("请求响应", "请求事件示例", "1.0.0", Service.ServiceType.FUNCTION)
+
+# 响应好友请求
+friend_req = plugin.on_request("好友请求", "自动处理好友请求")
+
+@friend_req.handle()
+async def _(event: FriendRequestEvent):
+    # 自动同意好友请求
+    await event.approve()
+    await friend_req.finish("已自动同意好友请求")
+```
+
+---
+
+## 9. 命令组与主命令前缀
+
+### 9.1 使用 `main_cmd` 设置主命令前缀
+
+当插件有多个相关命令时，可以使用 `main_cmd` 统一前缀：
+
+```python
+from ATRI.service import Service
+
+# 设置主命令前缀为"天气"
+plugin = Service(
+    "天气查询",
+    "天气相关功能",
+    "1.0.0",
+    Service.ServiceType.FUNCTION
+).main_cmd("天气")
+
+# 这些命令会自动变成 /天气.查询、/天气.设置 等
+query = plugin.cmd_as_group("查询", "查询天气")
+setting = plugin.cmd_as_group("设置", "设置天气")
+
+@query.handle()
+async def _():
+    await query.finish("北京：晴，25°C")
+
+@setting.handle()
+async def _():
+    await setting.finish("已设置默认城市为北京")
+```
+
+### 9.2 使用 `cmd_as_group` 创建子命令
+
+`cmd_as_group` 配合 `main_cmd` 使用，创建层级命令：
+
+```python
+from ATRI.service import Service
+
+plugin = Service("管理", "管理功能", "1.0.0", Service.ServiceType.SYSTEM).main_cmd("管理")
+
+# 命令变为 /管理.用户、/管理.群组 等
+user_mgmt = plugin.cmd_as_group("用户", "用户管理")
+group_mgmt = plugin.cmd_as_group("群组", "群组管理")
+
+@user_mgmt.handle()
+async def _():
+    await user_mgmt.finish("用户管理功能")
+```
+
+---
+
+## 10. 插件配置系统
+
+从 YHN-LK0-024 开始，ATRI 使用新的 `PluginConfig` + `Field` API 来管理插件配置。
+
+### 10.1 定义配置类
+
+```python
+from ATRI.configs import PluginConfig, Field
+
+class MyPluginConfig(PluginConfig):
+    # 基础类型字段
+    enabled = Field(
+        type_=bool,
+        default=True,
+        label="启用插件",
+        description="是否启用此插件"
+    )
+    
+    max_count = Field(
+        type_=int,
+        default=100,
+        label="最大数量",
+        description="最大处理数量",
+        min=1,
+        max=1000
+    )
+    
+    # 嵌套配置
+    api_config = Field(
+        type_=dict,
+        default={},
+        label="API配置",
+        children={
+            "api_key": Field(
+                type_=str,
+                default="",
+                label="API密钥"
+            ),
+            "timeout": Field(
+                type_=int,
+                default=30,
+                label="超时时间",
+                min=1,
+                max=300
+            )
+        }
+    )
+```
+
+### 10.2 在插件中使用配置
+
+```python
+from ATRI.service import Service
+from ATRI.configs import PluginConfig, Field
+
+class DemoConfig(PluginConfig):
+    greeting = Field(
+        type_=str,
+        default="你好",
+        label="问候语",
+        description="默认问候语"
+    )
+
+plugin = Service("配置示例", "配置系统演示", "1.0.0", Service.ServiceType.FUNCTION)
+config = DemoConfig("配置示例")  # 传入服务名
+
+hello = plugin.on_command("你好", "问候命令")
+
+@hello.handle()
+async def _():
+    # 读取配置
+    greeting = config.get("greeting")
+    await hello.finish(greeting)
+```
+
+### 10.3 配置的读取与修改
+
+```python
+# 读取配置
+value = config.get("字段名")
+nested_value = config.get("api_config.api_key")  # 支持点号路径
+
+# 修改配置
+config.set("字段名", 新值)
+config.set("api_config.timeout", 60)  # 支持点号路径
+
+# 批量更新
+config.update({
+    "enabled": True,
+    "max_count": 200
+})
+```
+
+---
+
+## 11. 计划任务
+
+使用 `scheduler_jobs()` 创建定时任务：
+
+```python
+from ATRI.service import Service
+
+plugin = Service("定时任务", "计划任务示例", "1.0.0", Service.ServiceType.FUNCTION)
+
+# 获取计划任务控制器
+scheduler = plugin.scheduler_jobs()
+
+# 添加定时任务
+@scheduler.add_job(
+    trigger="cron",           # 触发器类型
+    hour=8,                   # 每天早上8点
+    minute=0,
+    id="morning_greeting"     # 任务ID
+)
+async def morning_greeting():
+    """早间问候任务"""
+    from ATRI import get_bot
+    bot = get_bot()
+    # 发送消息到指定群
+    await bot.send_group_msg(
+        group_id=123456789,
+        message="早上好！新的一天开始了~"
+    )
+
+# 添加间隔任务
+@scheduler.add_job(
+    trigger="interval",
+    minutes=30,               # 每30分钟
+    id="health_check"
+)
+async def health_check():
+    """健康检查任务"""
+    print("执行健康检查...")
+```
+
+---
+
+## 12. 生命周期钩子
+
+### 12.1 启动时执行 `on_startup`
+
+```python
+from ATRI.service import Service
+
+plugin = Service("启动钩子", "生命周期示例", "1.0.0", Service.ServiceType.FUNCTION)
+
+@plugin.on_startup
+async def init_data():
+    """插件启动时初始化数据"""
+    print("插件正在启动...")
+    # 初始化数据库连接、加载缓存等
+```
+
+### 12.2 卸载时执行 `on_unload`
+
+```python
+@plugin.on_unload
+async def cleanup():
+    """插件卸载时清理资源"""
+    print("插件正在卸载...")
+    # 关闭数据库连接、保存状态等
+```
+
+---
+
+## 13. 高级特性
+
+### 13.1 命令别名
+
+```python
+from ATRI.service import Service
+
+plugin = Service("别名示例", "命令别名演示", "1.0.0", Service.ServiceType.FUNCTION)
+
+# 支持多个命令触发同一个功能
+help_cmd = plugin.on_command(
+    cmd="帮助",
+    docs="显示帮助信息",
+    aliases={"help", "菜单", "功能列表"}  # 别名集合
+)
+
+@help_cmd.handle()
+async def _():
+    await help_cmd.finish("这是帮助信息")
+# 现在 /帮助、/help、/菜单、/功能列表 都能触发
+```
+
+### 13.2 冷却时间
+
+使用 NoneBot 的 Cooldown 中间件：
+
+```python
+from nonebot.adapters.onebot.v11.helpers import Cooldown
+from ATRI.service import Service
+
+plugin = Service("冷却示例", "冷却时间演示", "1.0.0", Service.ServiceType.FUNCTION)
+
+daily = plugin.on_command("签到", "每日签到")
+
+# 添加24小时冷却，提示自定义消息
+@daily.handle([Cooldown(86400, prompt="今天已经签到过了，明天再来吧~")])
+async def _():
+    await daily.finish("签到成功！")
+```
+
+### 13.3 服务专属路径
+
+使用 `get_path()` 获取插件专属存储目录：
+
+```python
+from ATRI.service import Service
+import json
+
+plugin = Service("数据存储", "数据持久化示例", "1.0.0", Service.ServiceType.FUNCTION)
+
+# 获取插件专属目录（自动创建）
+data_dir = plugin.get_path()
+
+# 存储数据
+def save_data(user_id: str, data: dict):
+    file_path = data_dir / f"{user_id}.json"
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False)
+
+# 读取数据
+def load_data(user_id: str) -> dict:
+    file_path = data_dir / f"{user_id}.json"
+    if file_path.exists():
+        with open(file_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+```
+
+### 13.4 发送消息给主人
+
+```python
+from ATRI.service import Service
+
+plugin = Service("通知示例", "通知功能演示", "1.0.0", Service.ServiceType.FUNCTION)
+
+error_cmd = plugin.on_command("报错", "测试错误通知")
+
+@error_cmd.handle()
+async def _():
+    # 发送错误报告给主人
+    await Service.send_to_master("插件发生错误，请检查日志！")
+    await error_cmd.finish("已通知管理员")
+```
+
+### 13.5 服务开关控制
+
+```python
+from ATRI.service import Service
+
+# 设置 allow_switch(False) 表示此服务不可被用户开关
+plugin = Service(
+    "核心服务",
+    "不可关闭的核心功能",
+    "1.0.0",
+    Service.ServiceType.SYSTEM
+).allow_switch(False)
+```
+
+---
+
+## 14. 完整实战示例
+
+下面是一个综合了多个特性的完整插件示例：
+
+```python
+from random import choice
+from nonebot.adapters.onebot.v11.helpers import Cooldown
+from ATRI.service import Service
+from ATRI.configs import PluginConfig, Field
+
+# 定义配置
+class FortuneConfig(PluginConfig):
+    greetings = Field(
+        type_=list,
+        default=["早上好！", "中午好！", "晚上好！"],
+        label="问候语列表",
+        description="随机问候语"
+    )
+    max_uses = Field(
+        type_=int,
+        default=10,
+        label="每日使用次数",
+        description="每个用户每天可使用的次数",
+        min=1,
+        max=100
+    )
+
+# 创建服务
+plugin = Service(
+    "每日运势",
+    "查询今日运势",
+    "1.0.0",
+    Service.ServiceType.ENTERTAINMENT,
+    "开发者名字"
+)
+
+# 加载配置
+config = FortuneConfig("每日运势")
+
+# 主命令
+fortune = plugin.on_command(
+    cmd="运势",
+    docs="查询今日运势",
+    aliases={"今日运势", "运气"}
+)
+
+# 添加冷却时间（每小时一次）
+@fortune.handle([Cooldown(3600, prompt="冷却中，请稍后再试~")])
+async def _():
+    greetings = config.get("greetings")
+    message = choice(greetings)
+    
+    fortunes = ["大吉", "中吉", "小吉", "吉", "凶"]
+    fortune_level = choice(fortunes)
+    
+    await fortune.finish(f"{message}\n今日运势：{fortune_level}")
+
+# 关键词响应
+keyword_resp = plugin.on_keyword(
+    keywords={"倒霉", "运气差"},
+    docs="安慰回应"
+)
+
+@keyword_resp.handle()
+async def _():
+    await keyword_resp.finish("别灰心，明天会更好的！")
+
+# 启动时初始化
+@plugin.on_startup
+async def init():
+    print("每日运势插件已启动")
+```
+
+---
+
+## 15. 权限控制
 
 ATRI 支持权限封装，典型代码：
 
@@ -256,9 +741,9 @@ master_cmd = plugin.on_command("重启", "重启机器人", permission=MASTER)
 
 ---
 
-## 9. 真实开发建议
+## 16. 真实开发建议
 
-### 9.1 建议保持单一职责
+### 16.1 建议保持单一职责
 
 一个插件最好只承担一类功能，例如：
 
@@ -269,15 +754,15 @@ master_cmd = plugin.on_command("重启", "重启机器人", permission=MASTER)
 
 不要把无关逻辑堆进同一个插件。
 
-### 9.2 代码结构建议
+### 16.2 代码结构建议
 
 ```text
 plugins/
 └── mytool/
-    ├── __init__.py
-    ├── config.py
-    ├── utils.py
-    └── handlers.py
+    ├── __init__.py      # 服务注册和命令入口
+    ├── config.py        # 插件配置定义
+    ├── utils.py         # 工具函数
+    └── handlers.py      # 命令处理逻辑
 ```
 
 如果插件逻辑较多，可以拆成多个模块，但入口文件中仍然要保留：
@@ -286,7 +771,7 @@ plugins/
 plugin = Service(...)
 ```
 
-### 9.3 先写最小可运行版
+### 16.3 先写最小可运行版
 
 开发插件时，推荐顺序：
 
@@ -299,7 +784,7 @@ plugin = Service(...)
 
 ---
 
-## 10. 总结
+## 17. 总结
 
 ATRI 的基础插件本质上就是：
 
@@ -316,4 +801,23 @@ async def _():
 
 只要遵循这个模式，就能开发出可被 ATRI 识别并运行的插件。
 
-如果你已经掌握了这个基础模式，下一步就是进入 LK 插件开发，使用 `ATRI.system.lkbot` 提供的用户系统、背包、道具、商店和消息队列等能力。
+### 核心特性速查
+
+| 特性 | API | 说明 |
+|------|-----|------|
+| 命令响应 | `on_command()` | 响应指定命令 |
+| 关键词响应 | `on_keyword()` | 消息包含关键词时触发 |
+| 正则响应 | `on_regex()` | 正则匹配消息时触发 |
+| 通知响应 | `on_notice()` | 响应系统通知 |
+| 请求响应 | `on_request()` | 响应好友/群请求 |
+| 命令组 | `cmd_as_group()` | 创建子命令 |
+| 主命令前缀 | `main_cmd()` | 统一命令前缀 |
+| 插件配置 | `PluginConfig` + `Field` | 可配置化插件 |
+| 计划任务 | `scheduler_jobs()` | 定时任务 |
+| 启动钩子 | `on_startup` | 启动时执行 |
+| 卸载钩子 | `on_unload` | 卸载时执行 |
+| 冷却时间 | `Cooldown` | 命令冷却控制 |
+| 专属路径 | `get_path()` | 插件数据目录 |
+| 通知主人 | `send_to_master()` | 发送消息给主人 |
+
+如果你已经掌握了这些特性，下一步就是进入 LK 插件开发，使用 `ATRI.system.lkbot` 提供的用户系统、背包、道具、商店和消息队列等能力。
